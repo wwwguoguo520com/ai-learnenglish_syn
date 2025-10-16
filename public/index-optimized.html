@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习标注工具 v4.2 优化版</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 快速标注优化样式 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .quick-btn {
+            padding: 12px 8px;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .quick-btn:hover {
+            border-color: #2f54eb;
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(47, 84, 235, 0.15);
+        }
+
+        .quick-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Toast通知 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+            z-index: 10001;
+            font-size: 14px;
+            font-weight: 500;
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.info {
+            background: #3b82f6;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 改进的选择工具栏 */
+        .selection-toolbar {
+            position: fixed;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.1);
+            max-width: 520px;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 10000;
+            padding: 0;
+            min-width: 360px;
+        }
+
+        .selection-toolbar.hidden {
+            display: none;
+        }
+
+        /* 表单分组 */
+        .form-group {
+            padding: 16px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .form-group:last-of-type {
+            border-bottom: none;
+        }
+
+        .group-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 类别按钮网格 */
+        .category-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .category-buttons button {
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #374151;
+        }
+
+        .category-buttons button:hover {
+            border-color: #2f54eb;
+            background: #eff6ff;
+            transform: translateY(-1px);
+        }
+
+        .category-buttons button.active {
+            border-color: #2f54eb;
+            background: #2f54eb;
+            color: white;
+            box-shadow: 0 4px 12px rgba(47, 84, 235, 0.2);
+        }
+
+        /* 语法按钮 */
+        .grammar-buttons button {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .grammar-buttons button::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .grammar-buttons button[data-category="mainSubject"]::before { background: #000; }
+        .grammar-buttons button[data-category="clauseSubject"]::before { background: #10b981; }
+        .grammar-buttons button[data-category="mainVerb"]::before { background: #ef4444; }
+        .grammar-buttons button[data-category="clauseVerb"]::before { background: #b91c1c; }
+        .grammar-buttons button[data-category="object"]::before { background: #f59e0b; }
+        .grammar-buttons button[data-category="attribute"]::before { background: #a855f7; }
+        .grammar-buttons button[data-category="adverbial"]::before { background: #3b82f6; }
+        .grammar-buttons button[data-category="conjunction"]::before { background: #06b6d4; }
+        .grammar-buttons button[data-category="clauseMarker"]::before { background: #ec4899; }
+
+        /* 表单底部按钮 */
+        .form-footer {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #2f54eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(47, 84, 235, 0.3);
+        }
+
+        .btn-cancel {
+            padding: 12px 20px;
+            background: white;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        /* 暗黑模式优化 */
+        [data-theme="dark"] .quick-actions {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-color: #334155;
+        }
+
+        [data-theme="dark"] .quick-btn {
+            background: #334155;
+            color: #f1f5f9;
+            border-color: #475569;
+        }
+
+        [data-theme="dark"] .quick-btn:hover {
+            background: #475569;
+            border-color: #60a5fa;
+        }
+
+        [data-theme="dark"] .selection-toolbar {
+            background: #1e293b;
+            color: #f1f5f9;
+        }
+
+        [data-theme="dark"] .form-group {
+            border-color: #334155;
+        }
+
+        [data-theme="dark"] .category-buttons button {
+            background: #334155;
+            color: #f1f5f9;
+            border-color: #475569;
+        }
+
+        [data-theme="dark"] .category-buttons button:hover {
+            background: #475569;
+            border-color: #60a5fa;
+        }
+
+        [data-theme="dark"] .category-buttons button.active {
+            background: #60a5fa;
+            border-color: #60a5fa;
+            color: #111827;
+        }
+
+        [data-theme="dark"] .form-footer {
+            background: #111827;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 头部导航 -->
+        <header class="app-header">
+            <div>
+                <h1>📚 英语学习标注工具 v4.2</h1>
+                <p>智能标注 | AI分析 | 语法学习 | 生词本复习</p>
+            </div>
+            <div class="header-actions">
+                <button id="showAISettingsBtn" class="ghost-btn" title="AI设置">🤖 AI设置</button>
+                <button id="themeToggleBtn" class="ghost-btn" type="button" title="切换主题">🌙</button>
+                <button id="showVocabBookBtn" class="ghost-btn" title="生词本">📖 生词本</button>
+                <button id="showStatsBtn" class="ghost-btn" title="统计">📊 统计</button>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <div class="main-container">
+            <!-- 左侧：文本输入 -->
+            <section class="panel input-panel">
+                <h2>📝 短文输入</h2>
+                <textarea id="inputArea" placeholder="在此粘贴或输入英文文本..." style="width: 100%; min-height: 300px; padding: 16px; border-radius: 12px; border: 1px solid var(--border); font-size: 15px; line-height: 1.6; font-family: inherit;"></textarea>
+                <div class="panel-actions" style="display: flex; gap: 12px; margin-top: 12px;">
+                    <button id="saveDocBtn" class="primary">保存并打开短文</button>
+                    <button id="clearInputBtn" class="ghost-btn">清空</button>
+                </div>
+            </section>
+
+            <!-- 中间：阅读区 -->
+            <section class="panel reading-panel">
+                <div class="panel-header">
+                    <h2>📖 阅读区</h2>
+                    <div class="reading-actions">
+                        <button id="aiAnalyzeBtn" class="primary">🤖 AI分析</button>
+                        <button id="exportMarkdownBtn" class="ghost-btn">导出MD</button>
+                        <button id="clearHighlightsBtn" class="ghost-btn">清除标注</button>
+                    </div>
+                </div>
+                <div id="readingArea" class="reading-area" tabindex="0" aria-live="polite">
+                    <p class="placeholder">点击左侧"保存并打开短文"后开始标注。选中文本即可调出标注菜单。</p>
+                </div>
+            </section>
+
+            <!-- 右侧：标注列表 -->
+            <section class="panel annotations-panel">
+                <div class="panel-header">
+                    <h2>🏷️ 我的标注</h2>
+                    <button id="clearAllBtn" class="ghost-btn">清空</button>
+                </div>
+                <div id="annotationsList" class="annotations-list" style="display: flex; flex-direction: column; gap: 12px; overflow: auto;"></div>
+            </section>
+        </div>
+
+        <!-- 快捷标注对话框 -->
+        <div id="selectionToolbar" class="selection-toolbar hidden">
+            <form id="annotationForm">
+                <!-- 快速操作区 -->
+                <div class="quick-actions">
+                    <button type="button" class="quick-btn" onclick="quickAnnotate('vocab')">
+                        <span>⭐</span>
+                        <span>生词</span>
+                    </button>
+                    <button type="button" class="quick-btn" onclick="quickAnnotate('keypoint')">
+                        <span>💡</span>
+                        <span>重点</span>
+                    </button>
+                    <button type="button" class="quick-btn" onclick="quickAnnotate('difficulty')">
+                        <span>❗</span>
+                        <span>疑难</span>
+                    </button>
+                    <button type="button" class="quick-btn" onclick="quickAnnotate('phrase')">
+                        <span>📝</span>
+                        <span>词组</span>
+                    </button>
+                </div>
+
+                <!-- 标注类型 -->
+                <div class="form-group">
+                    <label class="group-label">标注类型</label>
+                    <div class="category-buttons">
+                        <button type="button" data-category="vocab">生词</button>
+                        <button type="button" data-category="phrase">词组</button>
+                        <button type="button" data-category="difficulty">疑难</button>
+                        <button type="button" data-category="keypoint">重点</button>
+                        <button type="button" data-category="translation">翻译</button>
+                        <button type="button" data-category="custom">自定义</button>
+                    </div>
+                    <input id="customCategoryInput" class="hidden" type="text" placeholder="输入自定义分类" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db; margin-top: 8px;">
+                </div>
+
+                <!-- 语法分析（可折叠） -->
+                <details class="form-group">
+                    <summary class="group-label" style="cursor: pointer; user-select: none;">
+                        语法分析 ▼
+                    </summary>
+                    <div class="category-buttons grammar-buttons" style="margin-top: 12px;">
+                        <button type="button" data-category="mainSubject">主语</button>
+                        <button type="button" data-category="clauseSubject">从句主语</button>
+                        <button type="button" data-category="mainVerb">谓语</button>
+                        <button type="button" data-category="clauseVerb">从句谓语</button>
+                        <button type="button" data-category="object">宾/表</button>
+                        <button type="button" data-category="attribute">定语( )</button>
+                        <button type="button" data-category="adverbial">状语[ ]</button>
+                        <button type="button" data-category="conjunction">连词</button>
+                        <button type="button" data-category="clauseMarker">引导{ }</button>
+                    </div>
+                </details>
+
+                <!-- 备注 -->
+                <div class="form-group">
+                    <label class="group-label">释义/注释</label>
+                    <div style="position: relative;">
+                        <textarea id="noteInput" rows="2" placeholder="添加释义或注释" style="width: 100%; padding: 8px 40px 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical;"></textarea>
+                        <button type="button" id="aiExplainBtn" class="ghost-btn" style="position: absolute; top: 6px; right: 6px; padding: 4px 8px; font-size: 12px;" title="AI自动解释">🤖</button>
+                    </div>
+                    <input id="tagsInput" type="text" placeholder="标签（逗号分隔）" style="width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; margin-top: 8px;">
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="form-footer">
+                    <button type="button" id="cancelAnnotationBtn" class="btn-cancel">取消</button>
+                    <button type="submit" class="btn-primary">保存标注</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 右键菜单 -->
+        <div id="highlightContextMenu" class="context-menu hidden" style="position: fixed; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 6px; z-index: 10001;">
+            <button class="context-menu-item" data-action="translate" style="display: block; width: 100%; padding: 8px 12px; background: none; border: none; text-align: left; font-size: 13px; cursor: pointer; border-radius: 4px;">🤖 AI翻译</button>
+            <button class="context-menu-item" data-action="addToVocab" style="display: block; width: 100%; padding: 8px 12px; background: none; border: none; text-align: left; font-size: 13px; cursor: pointer; border-radius: 4px;">⭐ 添加到生词本</button>
+            <button class="context-menu-item" data-action="speak" style="display: block; width: 100%; padding: 8px 12px; background: none; border: none; text-align: left; font-size: 13px; cursor: pointer; border-radius: 4px;">🔊 朗读</button>
+        </div>
+
+        <!-- 以下为模态框，省略详细代码，使用原有的模态框 -->
+
+    </div>
+
+    <script src="script.js"></script>
+    <script src="quick-annotate-fix.js"></script>
+    <script src="quick-mode-enhanced.js"></script>
+    <script>
+        // 确保快速标注函数可用
+        console.log('✅ 优化版HTML已加载');
+        console.log('✅ 快速标注功能:', typeof quickAnnotate !== 'undefined' ? '已就绪' : '未加载');
+        console.log('✅ 快速标注模式:', typeof toggleQuickMode !== 'undefined' ? '已就绪' : '未加载');
+    </script>
+</body>
+</html>

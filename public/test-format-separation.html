@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>格式与类别分离测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            padding: 40px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.8;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: var(--primary, #2f54eb);
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #2f54eb;
+        }
+        .test-label {
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .test-content {
+            font-size: 16px;
+            line-height: 2;
+        }
+        .expected {
+            margin-top: 8px;
+            padding: 8px;
+            background: #f0fdf4;
+            border-left: 3px solid #10b981;
+            font-size: 13px;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 格式与类别分离功能测试</h1>
+    <p style="color: #6b7280;">测试标注类别不影响颜色和样式，格式功能可以独立叠加</p>
+
+    <!-- 测试1：纯类别标注（不应有任何默认样式） -->
+    <div class="test-section">
+        <h2>测试1：纯类别标注（无颜色无格式）</h2>
+
+        <div class="test-item">
+            <div class="test-label">1.1 学习类别 - 无样式</div>
+            <div class="test-content">
+                This is <span class="highlight" data-category="vocab">vocab</span>,
+                <span class="highlight" data-category="phrase">phrase</span>,
+                <span class="highlight" data-category="difficulty">difficulty</span>,
+                <span class="highlight" data-category="keypoint">keypoint</span>, and
+                <span class="highlight" data-category="translation">translation</span>.
+            </div>
+            <div class="expected">✅ 预期：所有标注应该没有任何背景色、文字颜色或字重变化，看起来像普通文本</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">1.2 语法类别 - 无样式</div>
+            <div class="test-content">
+                This is <span class="highlight" data-category="mainSubject">mainSubject</span>,
+                <span class="highlight" data-category="mainVerb">mainVerb</span>,
+                <span class="highlight" data-category="object">object</span>, and
+                <span class="highlight" data-category="conjunction">conjunction</span>.
+            </div>
+            <div class="expected">✅ 预期：所有标注应该没有任何背景色、文字颜色或字重变化，即使语法类别之前有font-weight</div>
+        </div>
+    </div>
+
+    <!-- 测试2：类别 + 颜色叠加 -->
+    <div class="test-section">
+        <h2>测试2：类别 + 颜色叠加</h2>
+
+        <div class="test-item">
+            <div class="test-label">2.1 生词 + 蜂蜜色背景</div>
+            <div class="test-content">
+                This is a <span class="highlight" data-category="vocab" data-color="honey">vocabulary word</span> with honey background.
+            </div>
+            <div class="expected">✅ 预期：蜂蜜色背景 + 淡阴影，文字保持默认黑色</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">2.2 主动词 + 薄荷绿背景</div>
+            <div class="test-content">
+                The cat <span class="highlight" data-category="mainVerb" data-color="mint">runs</span> fast.
+            </div>
+            <div class="expected">✅ 预期：薄荷绿背景 + 淡阴影，文字保持默认黑色（不是红色）</div>
+        </div>
+    </div>
+
+    <!-- 测试3：类别 + 格式叠加 -->
+    <div class="test-section">
+        <h2>测试3：类别 + 格式叠加</h2>
+
+        <div class="test-item">
+            <div class="test-label">3.1 生词 + 加粗</div>
+            <div class="test-content">
+                This is a <span class="highlight" data-category="vocab" data-bold="true">bold vocabulary</span> word.
+            </div>
+            <div class="expected">✅ 预期：文字加粗，无背景色，无文字颜色变化</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">3.2 词组 + 下划线</div>
+            <div class="test-content">
+                This is a <span class="highlight" data-category="phrase" data-underline="true">underlined phrase</span>.
+            </div>
+            <div class="expected">✅ 预期：带下划线，无背景色，无文字颜色变化</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">3.3 重点 + 删除线</div>
+            <div class="test-content">
+                This is a <span class="highlight" data-category="keypoint" data-strikethrough="true">strikethrough keypoint</span>.
+            </div>
+            <div class="expected">✅ 预期：带删除线，无背景色，无文字颜色变化</div>
+        </div>
+    </div>
+
+    <!-- 测试4：颜色 + 格式叠加 -->
+    <div class="test-section">
+        <h2>测试4：颜色 + 格式叠加（关键测试）</h2>
+
+        <div class="test-item">
+            <div class="test-label">4.1 蜂蜜色 + 加粗</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="honey" data-bold="true">honey + bold</span>.
+            </div>
+            <div class="expected">✅ 预期：蜂蜜色背景 + 阴影 + 文字加粗</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">4.2 薄荷绿 + 下划线</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="mint" data-underline="true">mint + underline</span>.
+            </div>
+            <div class="expected">✅ 预期：薄荷绿背景 + 阴影 + 下划线（背景不会消失！）</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">4.3 天空蓝 + 删除线</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="sky" data-strikethrough="true">sky + strikethrough</span>.
+            </div>
+            <div class="expected">✅ 预期：天空蓝背景 + 阴影 + 删除线</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">4.4 兰花紫 + 方框边框</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="orchid" data-border="square">orchid + square border</span>.
+            </div>
+            <div class="expected">✅ 预期：兰花紫背景 + 阴影 + 方框边框（阴影不会消失！）</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">4.5 日落红 + 圆角边框</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="sunset" data-border="round">sunset + round border</span>.
+            </div>
+            <div class="expected">✅ 预期：日落红背景 + 阴影 + 圆角边框（阴影不会消失！）</div>
+        </div>
+    </div>
+
+    <!-- 测试5：三重叠加 -->
+    <div class="test-section">
+        <h2>测试5：类别 + 颜色 + 格式三重叠加</h2>
+
+        <div class="test-item">
+            <div class="test-label">5.1 生词 + 蜂蜜色 + 加粗</div>
+            <div class="test-content">
+                This is <span class="highlight" data-category="vocab" data-color="honey" data-bold="true">vocab + honey + bold</span>.
+            </div>
+            <div class="expected">✅ 预期：蜂蜜色背景 + 阴影 + 文字加粗</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">5.2 主动词 + 薄荷绿 + 下划线</div>
+            <div class="test-content">
+                The cat <span class="highlight" data-category="mainVerb" data-color="mint" data-underline="true">runs</span> fast.
+            </div>
+            <div class="expected">✅ 预期：薄荷绿背景 + 阴影 + 下划线</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">5.3 重点 + 日落红 + 删除线 + 加粗</div>
+            <div class="test-content">
+                This is <span class="highlight" data-category="keypoint" data-color="sunset" data-strikethrough="true" data-bold="true">keypoint + sunset + strikethrough + bold</span>.
+            </div>
+            <div class="expected">✅ 预期：日落红背景 + 阴影 + 删除线 + 文字加粗</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">5.4 词组 + 兰花紫 + 方框边框 + 下划线</div>
+            <div class="test-content">
+                This is a <span class="highlight" data-category="phrase" data-color="orchid" data-border="square" data-underline="true">complex annotation</span>.
+            </div>
+            <div class="expected">✅ 预期：兰花紫背景 + 阴影 + 方框边框 + 下划线（所有样式共存）</div>
+        </div>
+    </div>
+
+    <!-- 测试6：虚线下划线 -->
+    <div class="test-section">
+        <h2>测试6：虚线下划线叠加</h2>
+
+        <div class="test-item">
+            <div class="test-label">6.1 薄荷绿 + 虚线下划线</div>
+            <div class="test-content">
+                This is <span class="highlight" data-color="mint" data-dashed="true">mint + dashed</span>.
+            </div>
+            <div class="expected">✅ 预期：薄荷绿背景 + 阴影 + 虚线下划线</div>
+        </div>
+
+        <div class="test-item">
+            <div class="test-label">6.2 生词 + 蜂蜜色 + 虚线 + 加粗</div>
+            <div class="test-content">
+                This is <span class="highlight" data-category="vocab" data-color="honey" data-dashed="true" data-bold="true">vocab + honey + dashed + bold</span>.
+            </div>
+            <div class="expected">✅ 预期：蜂蜜色背景 + 阴影 + 虚线下划线 + 文字加粗</div>
+        </div>
+    </div>
+
+    <!-- 测试结果说明 -->
+    <div class="test-section" style="background: #eff6ff; border: 2px solid #3b82f6;">
+        <h2 style="color: #1e40af;">📌 测试要点</h2>
+        <ul style="line-height: 1.8; color: #1e3a8a;">
+            <li><strong>类别独立性</strong>：data-category 不应该自动应用任何颜色或字重</li>
+            <li><strong>颜色独立性</strong>：data-color 只控制背景和阴影，不影响文字颜色</li>
+            <li><strong>格式独立性</strong>：加粗/下划线/删除线/边框不应该移除颜色的背景和阴影</li>
+            <li><strong>完美叠加</strong>：类别 + 颜色 + 格式应该可以同时生效，互不干扰</li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background: #f0fdf4; border-radius: 8px;">
+        <h3 style="color: #065f46; margin-top: 0;">✅ 修复内容总结</h3>
+        <ol style="line-height: 2; color: #047857;">
+            <li><strong>注释掉所有 category 的颜色和字重定义</strong> (styles.css 1311-1361行)</li>
+            <li><strong>删除下划线样式的背景覆盖</strong> (styles.css 1210-1211行)</li>
+            <li><strong>删除边框样式的阴影覆盖</strong> (styles.css 2582, 2589, 2595行)</li>
+        </ol>
+    </div>
+</body>
+</html>

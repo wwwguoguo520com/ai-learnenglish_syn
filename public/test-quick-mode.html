@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速标注模式测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 确保格式工具栏可见 */
+        .formatting-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f3f5ff 100%);
+            margin-bottom: 16px;
+        }
+
+        .format-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* 测试说明 */
+        .test-info {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .test-info h2 {
+            margin: 0 0 12px 0;
+            color: #1e40af;
+        }
+
+        .test-info ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .test-info li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+
+        .status-indicator h3 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 6px 0;
+            font-size: 13px;
+        }
+
+        .status-value {
+            font-weight: 600;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- 测试说明 -->
+        <div class="test-info">
+            <h2>🧪 快速标注模式测试</h2>
+            <ol>
+                <li><strong>点击颜色</strong>（下方圆形按钮）→ 按钮应有蓝色边框</li>
+                <li><strong>点击 B 按钮</strong> → 按钮应变蓝色</li>
+                <li><strong>点击"快速标注"</strong> → 按钮应变深黑色</li>
+                <li><strong>选中下方文字</strong> → 自动标注，不弹窗</li>
+                <li><strong>查看右下角状态</strong> → 显示当前设置</li>
+            </ol>
+        </div>
+
+        <!-- 格式工具栏 -->
+        <div class="formatting-toolbar">
+            <div class="format-group">
+                <button type="button" id="formatBoldToggle" class="format-btn" title="加粗">B</button>
+                <button type="button" id="formatUnderlineToggle" class="format-btn" title="下划线">U</button>
+                <button type="button" id="formatStrikethroughToggle" class="format-btn" title="删除线">S</button>
+            </div>
+
+            <div class="format-group color-group">
+                <button type="button" class="format-color" data-color="honey" title="蜜糖色"></button>
+                <button type="button" class="format-color" data-color="mint" title="薄荷色"></button>
+                <button type="button" class="format-color" data-color="sky" title="天空色"></button>
+                <button type="button" class="format-color" data-color="orchid" title="兰花色"></button>
+                <button type="button" class="format-color" data-color="sunset" title="落日色"></button>
+            </div>
+
+            <div class="format-group">
+                <button type="button" class="format-border-btn" data-border="none" title="无边框">无</button>
+                <button type="button" class="format-border-btn" data-border="square" title="方框">□</button>
+                <button type="button" class="format-border-btn" data-border="round" title="圆框">○</button>
+            </div>
+
+            <button type="button" id="formatApplyBtn" class="ghost-btn format-apply">快速标注</button>
+        </div>
+
+        <!-- 阅读区 -->
+        <section class="panel">
+            <h2>📖 测试文本</h2>
+            <div id="readingArea" class="reading-area" tabindex="0">
+                <p>Learning English is an important skill in today's globalized world. It opens up opportunities for communication, education, and career advancement.</p>
+                <p>The journey of mastering a new language requires dedication, practice, and patience. Every word you learn brings you one step closer to fluency.</p>
+                <p>Technology has made language learning more accessible than ever before. Online resources, apps, and interactive tools provide countless ways to improve your skills.</p>
+            </div>
+        </section>
+
+        <!-- 标注列表 -->
+        <section class="panel">
+            <h2>🏷️ 标注列表</h2>
+            <div id="annotationList"></div>
+        </section>
+
+        <!-- 状态指示器 -->
+        <div class="status-indicator">
+            <h3>当前状态</h3>
+            <div class="status-item">
+                <span>快速模式:</span>
+                <span class="status-value" id="statusMode">关闭</span>
+            </div>
+            <div class="status-item">
+                <span>颜色:</span>
+                <span class="status-value" id="statusColor">未选择</span>
+            </div>
+            <div class="status-item">
+                <span>加粗:</span>
+                <span class="status-value" id="statusBold">否</span>
+            </div>
+            <div class="status-item">
+                <span>下划线:</span>
+                <span class="status-value" id="statusUnderline">否</span>
+            </div>
+            <div class="status-item">
+                <span>标注数:</span>
+                <span class="status-value" id="statusCount">0</span>
+            </div>
+        </div>
+
+        <!-- 标注对话框（隐藏，快速模式下不使用） -->
+        <div id="selectionToolbar" class="selection-toolbar hidden">
+            <!-- 保持原有结构，但快速模式下不会显示 -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 状态更新函数
+        function updateStatusDisplay() {
+            if (typeof state === 'undefined') return;
+
+            document.getElementById('statusMode').textContent =
+                (typeof quickAnnotationMode !== 'undefined' && quickAnnotationMode) ? '✅ 开启' : '❌ 关闭';
+
+            document.getElementById('statusColor').textContent =
+                state.lastColor || '未选择';
+
+            document.getElementById('statusBold').textContent =
+                state.lastBold ? '✅ 是' : '❌ 否';
+
+            document.getElementById('statusUnderline').textContent =
+                state.lastUnderline ? '✅ 是' : '❌ 否';
+
+            document.getElementById('statusCount').textContent =
+                state.annotations ? state.annotations.length : 0;
+        }
+
+        // 定期更新状态显示
+        setInterval(updateStatusDisplay, 500);
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            console.log('🧪 测试页面已加载');
+            console.log('✅ state对象:', typeof state !== 'undefined' ? '已加载' : '未加载');
+            console.log('✅ showToast函数:', typeof showToast !== 'undefined' ? '已加载' : '未加载');
+            console.log('✅ quickAnnotationMode:', typeof quickAnnotationMode !== 'undefined' ? '已定义' : '未定义');
+
+            updateStatusDisplay();
+        });
+    </script>
+</body>
+</html>

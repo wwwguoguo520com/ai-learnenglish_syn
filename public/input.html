@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>短文输入 - 英语阅读标注工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .input-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .input-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .input-header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            color: var(--text-dark);
+        }
+
+        .input-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .input-container {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 24px;
+        }
+
+        .input-section {
+            margin-bottom: 24px;
+        }
+
+        .input-section h2 {
+            margin: 0 0 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #sourceText {
+            width: 100%;
+            min-height: 300px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-large {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(47, 84, 235, 0.3);
+        }
+
+        .btn-primary-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(47, 84, 235, 0.4);
+        }
+
+        .document-section {
+            margin-top: 32px;
+        }
+
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .document-card {
+            background: #f7f9ff;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .document-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(47, 84, 235, 0.15);
+        }
+
+        .document-card.active {
+            border-color: var(--primary);
+            background: rgba(47, 84, 235, 0.08);
+        }
+
+        .document-card-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .document-card-preview {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .document-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .document-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .document-card-actions button {
+            padding: 4px 10px;
+            font-size: 12px;
+            background: rgba(47, 84, 235, 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .document-card-actions button:hover {
+            background: rgba(47, 84, 235, 0.2);
+        }
+
+        .document-card-actions button.delete {
+            background: rgba(248, 113, 113, 0.1);
+            color: #dc2626;
+        }
+
+        .document-card-actions button.delete:hover {
+            background: rgba(248, 113, 113, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-page">
+        <header class="input-header">
+            <h1>📝 英语短文输入</h1>
+            <p>输入或粘贴英文短文，开始您的学习之旅</p>
+        </header>
+
+        <div class="input-container">
+            <div class="input-section">
+                <h2>输入短文</h2>
+                <textarea id="sourceText" placeholder="在此粘贴或输入英文短文...&#10;&#10;支持 Markdown 格式自动转换" spellcheck="false"></textarea>
+            </div>
+
+            <div class="input-actions">
+                <button type="button" id="loadTextBtn" class="btn-primary-large">💾 保存并进入阅读</button>
+                <button type="button" id="importMarkdownBtn" class="ghost-btn">📄 导入 Markdown</button>
+                <input id="importMarkdownInput" type="file" accept=".md,.markdown,text/markdown" class="visually-hidden">
+                <button type="button" id="clearInputBtn" class="ghost-btn">🗑️ 清空</button>
+            </div>
+        </div>
+
+        <div class="document-section">
+            <h2>已保存的短文</h2>
+            <div id="documentGrid" class="document-grid"></div>
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-state-icon">📚</div>
+                <p>暂无保存的短文</p>
+                <p style="font-size: 13px;">输入短文后点击"保存并进入阅读"开始</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从 localStorage 加载数据
+        const STORAGE_KEY = 'reading-annotator:data:v1';
+        let editingDocId = null; // 当前正在编辑的文档ID
+
+        function loadState() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (!stored) return { documents: [], activeDocumentId: null };
+                const parsed = JSON.parse(stored);
+                // 确保 documents 数组存在
+                if (!parsed.documents) {
+                    parsed.documents = [];
+                }
+                return parsed;
+            } catch {
+                return { documents: [], activeDocumentId: null };
+            }
+        }
+
+        function saveState(state) {
+            try {
+                // 保持现有数据，只更新 documents 和 activeDocumentId
+                const existing = localStorage.getItem(STORAGE_KEY);
+                const fullState = existing ? JSON.parse(existing) : {};
+                fullState.documents = state.documents;
+                fullState.activeDocumentId = state.activeDocumentId;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(fullState));
+            } catch (e) {
+                console.error('保存失败:', e);
+            }
+        }
+
+        function generateId() {
+            return `doc-${Math.random().toString(16).slice(2)}-${Date.now().toString(36)}`;
+        }
+
+        function renderDocuments() {
+            const state = loadState();
+            const grid = document.getElementById('documentGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            if (!state.documents || state.documents.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            grid.innerHTML = '';
+
+            state.documents.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = 'document-card';
+                if (doc.id === state.activeDocumentId) {
+                    card.className += ' active';
+                }
+
+                const preview = doc.content.substring(0, 100);
+                const date = new Date(doc.createdAt).toLocaleDateString('zh-CN');
+
+                card.innerHTML = `
+                    <div class="document-card-title">${escapeHtml(doc.title || '未命名文档')}</div>
+                    <div class="document-card-preview">${escapeHtml(preview)}...</div>
+                    <div class="document-card-meta">
+                        <span>${date}</span>
+                        <div class="document-card-actions">
+                            <button onclick="openDocument('${doc.id}')">打开</button>
+                            <button onclick="editDocument('${doc.id}', event)">编辑</button>
+                            <button class="delete" onclick="deleteDocument('${doc.id}', event)">删除</button>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function openDocument(docId) {
+            const state = loadState();
+            state.activeDocumentId = docId;
+            saveState(state);
+            window.location.href = `reader.html?doc=${docId}`;
+        }
+
+        function editDocument(docId, event) {
+            event.stopPropagation();
+            const state = loadState();
+            const doc = state.documents.find(d => d.id === docId);
+            if (!doc) return;
+
+            // 加载文档内容到文本框
+            document.getElementById('sourceText').value = doc.content;
+            editingDocId = docId;
+
+            // 更新按钮文本
+            const btn = document.getElementById('loadTextBtn');
+            btn.textContent = '💾 更新并进入阅读';
+
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteDocument(docId, event) {
+            event.stopPropagation();
+            if (!confirm('确定要删除这篇短文吗？')) return;
+
+            const state = loadState();
+            state.documents = state.documents.filter(d => d.id !== docId);
+            if (state.activeDocumentId === docId) {
+                state.activeDocumentId = null;
+            }
+            saveState(state);
+            renderDocuments();
+        }
+
+        function saveAndOpen() {
+            const content = document.getElementById('sourceText').value.trim();
+            if (!content) {
+                alert('请先输入短文内容');
+                return;
+            }
+
+            const state = loadState();
+
+            if (editingDocId) {
+                // 更新现有文档
+                const doc = state.documents.find(d => d.id === editingDocId);
+                if (doc) {
+                    doc.content = content;
+                    doc.updatedAt = new Date().toISOString();
+                    const firstLine = content.split('\n')[0].substring(0, 50);
+                    doc.title = firstLine || '未命名文档';
+
+                    state.activeDocumentId = editingDocId;
+                    saveState(state);
+                    window.location.href = `reader.html?doc=${editingDocId}`;
+                }
+            } else {
+                // 创建新文档
+                const docId = generateId();
+                const firstLine = content.split('\n')[0].substring(0, 50);
+                const title = firstLine || '未命名文档';
+
+                const now = new Date().toISOString();
+                const newDoc = {
+                    id: docId,
+                    title: title,
+                    content: content,
+                    createdAt: now,
+                    updatedAt: now,
+                    annotations: []
+                };
+
+                if (!state.documents) {
+                    state.documents = [];
+                }
+                state.documents.unshift(newDoc);
+                state.activeDocumentId = docId;
+
+                saveState(state);
+                window.location.href = `reader.html?doc=${docId}`;
+            }
+        }
+
+        function clearInput() {
+            if (confirm('确定要清空输入内容吗？')) {
+                document.getElementById('sourceText').value = '';
+                editingDocId = null;
+                document.getElementById('loadTextBtn').textContent = '💾 保存并进入阅读';
+            }
+        }
+
+        function importMarkdown() {
+            document.getElementById('importMarkdownInput').click();
+        }
+
+        function handleMarkdownImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                const plainText = convertMarkdownToPlain(content);
+                document.getElementById('sourceText').value = plainText;
+            };
+            reader.readAsText(file);
+        }
+
+        function convertMarkdownToPlain(markdown) {
+            return markdown
+                .replace(/^#{1,6}\s+/gm, '')
+                .replace(/\*\*(.+?)\*\*/g, '$1')
+                .replace(/__(.+?)__/g, '$1')
+                .replace(/\*(.+?)\*/g, '$1')
+                .replace(/_(.+?)_/g, '$1')
+                .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+                .replace(/!\[.*?\]\(.+?\)/g, '')
+                .replace(/^```[\s\S]*?^```/gm, '')
+                .replace(/`(.+?)`/g, '$1')
+                .replace(/^>\s+/gm, '')
+                .replace(/^[\*\-\+]\s+/gm, '')
+                .replace(/^\d+\.\s+/gm, '');
+        }
+
+        // 事件监听
+        document.getElementById('loadTextBtn').addEventListener('click', saveAndOpen);
+        document.getElementById('clearInputBtn').addEventListener('click', clearInput);
+        document.getElementById('importMarkdownBtn').addEventListener('click', importMarkdown);
+        document.getElementById('importMarkdownInput').addEventListener('change', handleMarkdownImport);
+
+        // 初始化
+        renderDocuments();
+    </script>
+</body>
+</html>

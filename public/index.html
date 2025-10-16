@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语短文阅读标注工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .welcome-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px;
+        }
+
+        .welcome-container {
+            max-width: 600px;
+            background: white;
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+        }
+
+        .welcome-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1f2a44;
+            margin: 0 0 16px;
+        }
+
+        .welcome-desc {
+            font-size: 16px;
+            color: #5f6b7d;
+            margin: 0 0 40px;
+            line-height: 1.6;
+        }
+
+        .welcome-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f5f7fb;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #e8ecf7;
+            transform: translateY(-2px);
+        }
+
+        .features {
+            margin-top: 32px;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 8px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: #5f6b7d;
+        }
+
+        @media (max-width: 640px) {
+            .welcome-container {
+                padding: 32px 24px;
+            }
+
+            .welcome-title {
+                font-size: 24px;
+            }
+
+            .welcome-desc {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-page">
+        <div class="welcome-container">
+            <div class="welcome-icon">📚</div>
+            <h1 class="welcome-title">英语短文阅读标注工具</h1>
+            <p class="welcome-desc">
+                高效的英语学习助手，支持文本标注、知识提取、AI分析等功能，
+                帮助您构建个人英语知识库
+            </p>
+
+            <div class="welcome-buttons">
+                <a href="input.html" class="btn-large btn-primary">
+                    ✨ 开始使用
+                </a>
+                <button onclick="checkExistingDocs()" class="btn-large btn-secondary">
+                    📖 查看已保存的文档
+                </button>
+            </div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <span class="feature-icon">🎨</span>
+                    <span class="feature-text">多种标注样式：高亮、下划线、边框、Emoji</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📝</span>
+                    <span class="feature-text">智能分类：生词、词组、疑难、重点、翻译</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🤖</span>
+                    <span class="feature-text">AI辅助：语法分析、自动翻译、智能解释</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💾</span>
+                    <span class="feature-text">本地存储：数据安全，支持导入导出</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkExistingDocs() {
+            try {
+                const stored = localStorage.getItem('englishReaderState');
+                if (stored) {
+                    const state = JSON.parse(stored);
+                    if (state.documents && state.documents.length > 0) {
+                        window.location.href = 'input.html';
+                        return;
+                    }
+                }
+                alert('暂无已保存的文档，请先创建新文档');
+                window.location.href = 'input.html';
+            } catch {
+                window.location.href = 'input.html';
+            }
+        }
+
+        // Auto redirect if user has active document
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                const stored = localStorage.getItem('englishReaderState');
+                if (stored) {
+                    const state = JSON.parse(stored);
+                    // Auto redirect disabled for now - users should choose
+                    // if (state.activeDocumentId && state.documents && state.documents.find(d => d.id === state.activeDocumentId)) {
+                    //     window.location.href = `reader.html?doc=${state.activeDocumentId}`;
+                    // }
+                }
+            } catch {
+                // Continue to welcome page
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标注功能测试用例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', sans-serif;
+            padding: 20px;
+            background: #f8fafc;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #2f54eb;
+            margin-bottom: 10px;
+        }
+        .intro {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .test-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .test-section h2 {
+            color: #2f54eb;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .test-case {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2f54eb;
+        }
+        .test-case h3 {
+            color: #334155;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .test-steps {
+            margin: 10px 0;
+        }
+        .test-steps li {
+            margin: 8px 0 8px 20px;
+            line-height: 1.6;
+        }
+        .expected {
+            background: #dcfce7;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 3px solid #16a34a;
+        }
+        .expected strong {
+            color: #16a34a;
+        }
+        .status-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .status-box label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .status-box input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        .status-pass {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+        .status-fail {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .summary {
+            background: linear-gradient(135deg, #2f54eb 0%, #1e3a8a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .summary h2 {
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        .stat-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .note {
+            background: #fef3c7;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 3px solid #f59e0b;
+            font-size: 14px;
+        }
+        .code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 标注功能测试用例</h1>
+        <div class="intro">
+            <p><strong>测试目标：</strong>验证英语学习标注系统的所有核心功能</p>
+            <p><strong>测试方法：</strong>在 reader.html 中按照以下步骤逐项测试，勾选通过/失败状态</p>
+            <div class="note">
+                💡 <strong>提示：</strong>测试前请先打开 <code class="code">reader.html</code>，加载一篇英文短文
+            </div>
+        </div>
+
+        <!-- 测试组1：类别管理 -->
+        <div class="test-section">
+            <h2>📂 测试组1：类别管理与自定义样式</h2>
+
+            <div class="test-case" data-test="1.1">
+                <h3>测试用例 1.1：查看默认类别</h3>
+                <ol class="test-steps">
+                    <li>点击顶部工具栏的 <code class="code">📂 管理标注类别</code> 按钮</li>
+                    <li>查看是否显示默认类别：生词、词组、疑难、重点、手写画笔</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>弹出类别管理面板，显示5个默认类别
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-1.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-1.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="1.2">
+                <h3>测试用例 1.2：自定义类别样式</h3>
+                <ol class="test-steps">
+                    <li>在类别管理面板中，点击"生词"类别的 <code class="code">⚙️ 样式配置</code> 按钮</li>
+                    <li>展开样式配置面板</li>
+                    <li>修改背景颜色为"🍯 蜜糖色"</li>
+                    <li>修改文本颜色为红色</li>
+                    <li>修改边框样式为"圆框"，边框颜色为蓝色</li>
+                    <li>勾选"加粗"和"下划线"</li>
+                    <li>查看预览效果</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>预览区域显示应用了所有样式的文本效果
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-1.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-1.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="1.3">
+                <h3>测试用例 1.3：应用类别默认样式</h3>
+                <ol class="test-steps">
+                    <li>关闭类别管理面板</li>
+                    <li>在快速标注栏中选择"生词"类别</li>
+                    <li>选中文本 "hello"</li>
+                    <li>查看标注是否自动应用了刚才设置的样式</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>标注自动应用蜜糖色背景、红色文字、蓝色圆框、加粗、下划线
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-1.3-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-1.3-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组2：标注流程 -->
+        <div class="test-section">
+            <h2>✨ 测试组2：标注流程与模式切换</h2>
+
+            <div class="test-case" data-test="2.1">
+                <h3>测试用例 2.1：快速标注模式</h3>
+                <ol class="test-steps">
+                    <li>确认快速标注栏中选择了"生词"类别和"蜜糖色"</li>
+                    <li>点击 <code class="code">✓ 快速标注</code> 按钮（或按 Ctrl+Q）</li>
+                    <li>选中文本 "world"</li>
+                    <li>观察是否自动应用标注</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>选中文本后立即应用标注，无需弹出工具栏
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-2.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-2.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="2.2">
+                <h3>测试用例 2.2：标准标注模式（弹出工具栏）</h3>
+                <ol class="test-steps">
+                    <li>再次点击 <code class="code">✓ 退出快速标注</code> 关闭快速模式</li>
+                    <li>选中文本 "beautiful"</li>
+                    <li>观察是否弹出标注工具栏</li>
+                    <li>在工具栏中选择"词组"类别</li>
+                    <li>选择"薄荷色"</li>
+                    <li>点击 <code class="code">✓</code> 确认按钮</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>选中文本后弹出工具栏，可自定义所有样式后应用
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-2.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-2.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组3：手写画笔 -->
+        <div class="test-section">
+            <h2>✏️ 测试组3：手写画笔识别</h2>
+
+            <div class="test-case" data-test="3.1">
+                <h3>测试用例 3.1：大圆圈识别</h3>
+                <ol class="test-steps">
+                    <li>点击 <code class="code">✏️ 画笔</code> 按钮开启手写模式</li>
+                    <li>用鼠标在单词 "example" 周围画一个大圆圈（直径约30-50px）</li>
+                    <li>观察是否识别为圆圈并应用圆框标注</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>显示"已识别圈选并添加圆框"提示，文字应用橙色圆框
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-3.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-3.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="3.2">
+                <h3>测试用例 3.2：小圆圈识别（单字符）</h3>
+                <ol class="test-steps">
+                    <li>用鼠标在单个字符 "a" 周围画一个小圆圈（直径约10-15px）</li>
+                    <li>观察是否识别为圆圈</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>成功识别小圆圈，应用圆框标注
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-3.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-3.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="3.3">
+                <h3>测试用例 3.3：下划线识别</h3>
+                <ol class="test-steps">
+                    <li>用鼠标在单词 "test" 下方画一条直线</li>
+                    <li>观察是否识别为下划线</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>显示"已识别划线并添加下划线"提示，应用蓝色下划线
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-3.3-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-3.3-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="3.4">
+                <h3>测试用例 3.4：虚线识别</h3>
+                <ol class="test-steps">
+                    <li>用鼠标在单词下方画一条虚线（断断续续的线）</li>
+                    <li>观察是否识别为虚线</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>显示"已识别虚线并添加虚线样式"提示
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-3.4-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-3.4-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组4：样式混合 -->
+        <div class="test-section">
+            <h2>🎨 测试组4：样式混合与优先级</h2>
+
+            <div class="test-case" data-test="4.1">
+                <h3>测试用例 4.1：背景颜色与下划线共存</h3>
+                <ol class="test-steps">
+                    <li>关闭快速标注模式</li>
+                    <li>选中文本 "color"</li>
+                    <li>在弹出工具栏中选择"蜜糖色"背景</li>
+                    <li>勾选"下划线"</li>
+                    <li>选择下划线颜色为蓝色</li>
+                    <li>点击确认</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>文字有蜜糖色背景，同时有蓝色下划线，两者不冲突
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-4.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-4.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="4.2">
+                <h3>测试用例 4.2：自定义文本颜色</h3>
+                <ol class="test-steps">
+                    <li>选中文本 "text"</li>
+                    <li>在工具栏中点击"文本颜色"按钮</li>
+                    <li>选择红色</li>
+                    <li>确认标注</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>文字显示为红色，不受类别默认颜色影响
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-4.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-4.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="4.3">
+                <h3>测试用例 4.3：边框与背景颜色共存</h3>
+                <ol class="test-steps">
+                    <li>选中文本 "border"</li>
+                    <li>选择"天空色"背景</li>
+                    <li>选择"圆框"边框样式</li>
+                    <li>设置边框颜色为紫色</li>
+                    <li>确认标注</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>文字有天空色背景，外围有紫色圆框
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-4.3-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-4.3-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组5：数据持久化 -->
+        <div class="test-section">
+            <h2>💾 测试组5：数据持久化</h2>
+
+            <div class="test-case" data-test="5.1">
+                <h3>测试用例 5.1：类别记录保存</h3>
+                <ol class="test-steps">
+                    <li>创建5个不同类别的标注</li>
+                    <li>查看右侧标注列表，确认每个标注都有类别标记</li>
+                    <li>刷新页面（F5）</li>
+                    <li>再次查看标注列表</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>所有标注的类别信息都正确保存和恢复
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-5.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-5.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="5.2">
+                <h3>测试用例 5.2：重复文本标注恢复</h3>
+                <ol class="test-steps">
+                    <li>在文本中找到重复出现的单词（如 "the"）</li>
+                    <li>分别标注3个不同位置的 "the"，使用不同颜色</li>
+                    <li>刷新页面</li>
+                    <li>检查3个标注是否都正确恢复</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>所有重复文本的标注都能正确恢复，不会丢失
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-5.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-5.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="5.3">
+                <h3>测试用例 5.3：类别样式配置持久化</h3>
+                <ol class="test-steps">
+                    <li>修改"生词"类别的默认样式</li>
+                    <li>刷新页面</li>
+                    <li>再次打开类别管理，查看"生词"类别的样式配置</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>类别样式配置正确保存和恢复
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-5.3-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-5.3-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组6：笔记功能 -->
+        <div class="test-section">
+            <h2>📝 测试组6：笔记功能</h2>
+
+            <div class="test-case" data-test="6.1">
+                <h3>测试用例 6.1：单行笔记</h3>
+                <ol class="test-steps">
+                    <li>选中一个单词</li>
+                    <li>在弹出工具栏的笔记区输入：<code class="code">这是一个测试笔记</code></li>
+                    <li>确认标注</li>
+                    <li>鼠标悬停在标注上，查看笔记提示</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>悬停显示笔记内容，格式正确
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-6.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-6.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="6.2">
+                <h3>测试用例 6.2：多行笔记（换行支持）</h3>
+                <ol class="test-steps">
+                    <li>选中一个单词</li>
+                    <li>在笔记区输入多行内容：</li>
+                    <li><code class="code">第一行笔记</code></li>
+                    <li>按 Enter 换行</li>
+                    <li><code class="code">第二行笔记</code></li>
+                    <li>按 Enter 换行</li>
+                    <li><code class="code">第三行笔记</code></li>
+                    <li>确认标注</li>
+                    <li>鼠标悬停查看笔记，或在右侧标注列表查看</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>笔记内容分三行显示，换行格式正确保留
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-6.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-6.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试组7：边界情况 -->
+        <div class="test-section">
+            <h2>⚠️ 测试组7：边界情况与异常处理</h2>
+
+            <div class="test-case" data-test="7.1">
+                <h3>测试用例 7.1：嵌套标注</h3>
+                <ol class="test-steps">
+                    <li>标注一个词组 "beautiful world"（蜜糖色）</li>
+                    <li>在其中标注单词 "world"（薄荷色）</li>
+                    <li>观察两个标注是否正确显示</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>支持嵌套标注，内外层样式正确区分
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-7.1-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-7.1-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="7.2">
+                <h3>测试用例 7.2：跨行标注</h3>
+                <ol class="test-steps">
+                    <li>选中跨越多行的文本</li>
+                    <li>尝试标注</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>成功标注，每行片段正确应用样式
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-7.2-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-7.2-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="7.3">
+                <h3>测试用例 7.3：编辑已有标注</h3>
+                <ol class="test-steps">
+                    <li>完整选中一个已标注的文本</li>
+                    <li>观察是否进入编辑模式（工具栏显示原有样式）</li>
+                    <li>修改颜色为另一种颜色</li>
+                    <li>确认修改</li>
+                    <li>查看标注是否正确更新</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>成功进入编辑模式，修改后样式正确更新
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-7.3-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-7.3-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-case" data-test="7.4">
+                <h3>测试用例 7.4：删除标注</h3>
+                <ol class="test-steps">
+                    <li>在右侧标注列表中找到任一标注</li>
+                    <li>点击删除按钮</li>
+                    <li>确认删除</li>
+                    <li>查看文本区域和列表</li>
+                </ol>
+                <div class="expected">
+                    <strong>✓ 预期结果：</strong>标注从文本和列表中完全移除
+                </div>
+                <div class="status-box">
+                    <label class="status-pass">
+                        <input type="checkbox" name="test-7.4-pass">
+                        ✓ 通过
+                    </label>
+                    <label class="status-fail">
+                        <input type="checkbox" name="test-7.4-fail">
+                        ✗ 失败
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 测试总结 -->
+        <div class="summary">
+            <h2>📊 测试总结</h2>
+            <p>根据上方勾选的通过/失败状态，实时查看测试统计：</p>
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="label">总测试用例</div>
+                    <div class="value" id="totalTests">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">已通过</div>
+                    <div class="value" id="passedTests">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">已失败</div>
+                    <div class="value" id="failedTests">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">通过率</div>
+                    <div class="value" id="passRate">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 统计测试结果
+        function updateStats() {
+            const allTests = document.querySelectorAll('.test-case');
+            const passedBoxes = document.querySelectorAll('input[name*="-pass"]:checked');
+            const failedBoxes = document.querySelectorAll('input[name*="-fail"]:checked');
+
+            const total = allTests.length;
+            const passed = passedBoxes.length;
+            const failed = failedBoxes.length;
+            const passRate = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+            document.getElementById('totalTests').textContent = total;
+            document.getElementById('passedTests').textContent = passed;
+            document.getElementById('failedTests').textContent = failed;
+            document.getElementById('passRate').textContent = passRate + '%';
+        }
+
+        // 互斥选择：通过和失败只能选一个
+        document.querySelectorAll('.status-box').forEach(box => {
+            const passCheckbox = box.querySelector('input[name*="-pass"]');
+            const failCheckbox = box.querySelector('input[name*="-fail"]');
+
+            if (passCheckbox && failCheckbox) {
+                passCheckbox.addEventListener('change', () => {
+                    if (passCheckbox.checked) {
+                        failCheckbox.checked = false;
+                    }
+                    updateStats();
+                });
+
+                failCheckbox.addEventListener('change', () => {
+                    if (failCheckbox.checked) {
+                        passCheckbox.checked = false;
+                    }
+                    updateStats();
+                });
+            }
+        });
+
+        // 初始化统计
+        updateStats();
+
+        // 保存测试结果到 localStorage
+        function saveTestResults() {
+            const results = {};
+            document.querySelectorAll('.test-case').forEach(testCase => {
+                const testId = testCase.dataset.test;
+                const passBox = testCase.querySelector('input[name*="-pass"]');
+                const failBox = testCase.querySelector('input[name*="-fail"]');
+
+                results[testId] = {
+                    passed: passBox?.checked || false,
+                    failed: failBox?.checked || false
+                };
+            });
+
+            localStorage.setItem('annotationTestResults', JSON.stringify(results));
+        }
+
+        // 加载测试结果
+        function loadTestResults() {
+            const saved = localStorage.getItem('annotationTestResults');
+            if (!saved) return;
+
+            try {
+                const results = JSON.parse(saved);
+                Object.keys(results).forEach(testId => {
+                    const testCase = document.querySelector(`[data-test="${testId}"]`);
+                    if (testCase) {
+                        const passBox = testCase.querySelector('input[name*="-pass"]');
+                        const failBox = testCase.querySelector('input[name*="-fail"]');
+
+                        if (passBox) passBox.checked = results[testId].passed;
+                        if (failBox) failBox.checked = results[testId].failed;
+                    }
+                });
+                updateStats();
+            } catch (e) {
+                console.error('加载测试结果失败', e);
+            }
+        }
+
+        // 自动保存
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', saveTestResults);
+        });
+
+        // 页面加载时恢复结果
+        loadTestResults();
+    </script>
+</body>
+</html>

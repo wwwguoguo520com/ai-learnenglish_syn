@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完整修复测试 - v4.2</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .test-summary h1 {
+            margin: 0 0 20px 0;
+            font-size: 28px;
+        }
+        .fix-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .fix-item {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .fix-item h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fix-item p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .test-section {
+            background: #1e293b;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        [data-theme="dark"] .test-section h2 {
+            color: #a78bfa;
+        }
+        .test-steps {
+            background: #f8fafc;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        [data-theme="dark"] .test-steps {
+            background: #0f172a;
+            border-left-color: #a78bfa;
+        }
+        .test-steps ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        .test-steps li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .highlight-demo {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="test-summary">
+            <h1>🎉 英语标注工具 - 完整修复测试 v4.2</h1>
+            <p style="font-size: 16px; margin: 0 0 20px 0;">所有问题已修复并增强，以下是详细测试指南</p>
+
+            <div class="fix-list">
+                <div class="fix-item">
+                    <h3>✅ 修复1：选中文本弹出标记框</h3>
+                    <p>解决了事件监听器冲突，选中文本现在能正常弹出标注工具栏</p>
+                </div>
+                <div class="fix-item">
+                    <h3>✅ 修复2：快速标注模式</h3>
+                    <p>修复了applyHighlight参数错误，快速标注模式现在可以正常工作</p>
+                </div>
+                <div class="fix-item">
+                    <h3>✅ 修复3：黑暗模式颜色</h3>
+                    <p>添加了黑暗模式下的文字颜色适配，解决了看不见字的问题</p>
+                </div>
+                <div class="fix-item">
+                    <h3>🆕 增强4：AI逐句分析</h3>
+                    <p>新增AI语法分析逐句模式，支持进度显示和更准确的句子级别分析</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 测试1：选中文本标注</h2>
+            <div class="test-steps">
+                <strong>测试步骤：</strong>
+                <ol>
+                    <li>点击下方"加载测试文本"按钮</li>
+                    <li>在阅读区选中任意文本</li>
+                    <li>应该会立即弹出标注工具栏</li>
+                    <li>选择类别、颜色后保存</li>
+                    <li>文本应该被正确标注</li>
+                </ol>
+            </div>
+            <p><strong>预期结果：</strong>工具栏正常弹出，标注成功应用</p>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ 测试2：快速标注模式</h2>
+            <div class="test-steps">
+                <strong>测试步骤：</strong>
+                <ol>
+                    <li>点击顶部工具栏的"快速标注"按钮（或按 Ctrl+Q）</li>
+                    <li>在工具栏中选择颜色和样式（如：加粗、蜜糖色）</li>
+                    <li>选中阅读区的文本</li>
+                    <li>标注应该立即应用，无需弹出对话框</li>
+                    <li>点击"退出快速标注"结束模式</li>
+                </ol>
+            </div>
+            <p><strong>预期结果：</strong>选中即标注，快速高效，有成功提示</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🌙 测试3：黑暗模式颜色</h2>
+            <div class="test-steps">
+                <strong>测试步骤：</strong>
+                <ol>
+                    <li>点击右上角的主题切换按钮（🌙 图标）</li>
+                    <li>切换到黑暗模式</li>
+                    <li>创建不同类别的标注（生词、词组、疑难等）</li>
+                    <li>检查文字是否清晰可见</li>
+                    <li>切换回亮色模式对比</li>
+                </ol>
+            </div>
+            <p><strong>预期结果：</strong>黑暗模式下所有文字都清晰可见，颜色对比度良好</p>
+            <p><strong>颜色示例：</strong></p>
+            <div style="margin-top: 10px;">
+                <span class="highlight-demo" style="background: #9a7b00; color: #fbbf24;">生词 (vocab)</span>
+                <span class="highlight-demo" style="background: #065f46; color: #6ee7b7;">词组 (phrase)</span>
+                <span class="highlight-demo" style="background: #6b21a8; color: #c084fc;">疑难 (difficulty)</span>
+                <span class="highlight-demo" style="background: #c2410c; color: #f87171;">重点 (keypoint)</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🤖 测试4：AI语法分析（增强版）</h2>
+            <div class="test-steps">
+                <strong>测试步骤：</strong>
+                <ol>
+                    <li>点击右上角"🤖 AI"按钮配置API密钥</li>
+                    <li>输入OpenAI或兼容的API密钥和端点</li>
+                    <li>保存设置</li>
+                    <li>点击"🤖 AI分析"按钮</li>
+                    <li>选择"逐句分析"模式（推荐）或"整体分析"</li>
+                    <li>等待分析完成，查看进度提示</li>
+                    <li>检查自动应用的语法标注</li>
+                </ol>
+            </div>
+            <p><strong>新功能：</strong></p>
+            <ul>
+                <li>✨ 支持按句子逐个分析，结果更准确</li>
+                <li>📊 实时显示分析进度（第x/总数句）</li>
+                <li>⏹️ 支持中途停止分析</li>
+                <li>💡 改进的AI Prompt，识别更准确</li>
+                <li>🎯 成功/失败统计</li>
+            </ul>
+            <p><strong>预期结果：</strong>每个句子成分都被正确识别和标注，主语、谓语、宾语等清晰可见</p>
+        </div>
+
+        <header class="app-header" style="margin-top: 20px;">
+            <div>
+                <h1>测试阅读区</h1>
+            </div>
+            <div class="header-actions">
+                <button id="loadTestTextBtn" type="button">加载测试文本</button>
+                <button id="themeToggleBtn" class="ghost-btn" type="button" title="切换主题">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="layout" style="display: block; padding: 20px;">
+            <section class="panel reader-panel">
+                <header class="panel-header">
+                    <h2>阅读标注区</h2>
+                    <div class="reader-tools">
+                        <button id="clearHighlightsBtn" class="ghost-btn" type="button">清除全部标注</button>
+                        <button id="aiAnalyzeBtn" type="button" class="ghost-btn">🤖 AI分析</button>
+                        <button id="showAISettingsBtn" class="ghost-btn" type="button">🤖 AI设置</button>
+                    </div>
+                </header>
+
+                <div class="formatting-toolbar" role="toolbar" aria-label="快速标注工具">
+                    <div class="format-group" aria-label="文本样式">
+                        <button type="button" id="formatBoldToggle" class="format-btn" data-format="bold" title="加粗">B</button>
+                        <button type="button" id="formatUnderlineToggle" class="format-btn" data-format="underline" title="下划线">U</button>
+                    </div>
+                    <div class="format-group color-group" aria-label="背景颜色">
+                        <button type="button" class="format-color" data-color="honey" title="蜜糖色"></button>
+                        <button type="button" class="format-color" data-color="mint" title="薄荷色"></button>
+                        <button type="button" class="format-color" data-color="sky" title="天空色"></button>
+                        <button type="button" class="format-color" data-color="orchid" title="兰花色"></button>
+                        <button type="button" class="format-color" data-color="sunset" title="落日色"></button>
+                    </div>
+                    <button type="button" id="formatApplyBtn" class="ghost-btn format-apply">快速标注</button>
+                </div>
+
+                <div id="readingArea" class="reading-area" tabindex="0" style="min-height: 400px;">
+                    <p class="placeholder">点击"加载测试文本"开始测试所有修复功能...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 标注工具栏 -->
+    <div id="selectionToolbar" class="selection-toolbar hidden" role="dialog">
+        <form id="annotationForm">
+            <fieldset>
+                <legend>标注类型</legend>
+                <div class="category-buttons">
+                    <button type="button" data-category="vocab">生词</button>
+                    <button type="button" data-category="phrase">词组</button>
+                    <button type="button" data-category="difficulty">疑难</button>
+                    <button type="button" data-category="keypoint">重点</button>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>样式</legend>
+                <div class="style-options">
+                    <div class="color-palette">
+                        <button type="button" data-color="honey"></button>
+                        <button type="button" data-color="mint"></button>
+                        <button type="button" data-color="sky"></button>
+                        <button type="button" data-color="orchid"></button>
+                        <button type="button" data-color="sunset"></button>
+                    </div>
+                    <div class="style-toggles">
+                        <label class="style-toggle">
+                            <input type="checkbox" id="boldToggle"> 加粗
+                        </label>
+                        <label class="style-toggle">
+                            <input type="checkbox" id="underlineToggle"> 下划线
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>备注</legend>
+                <textarea id="noteInput" rows="2" placeholder="添加释义"></textarea>
+                <input id="tagsInput" type="text" placeholder="标签">
+            </fieldset>
+            <div class="toolbar-actions">
+                <button type="button" id="cancelAnnotationBtn" class="ghost-btn">取消</button>
+                <button type="submit">保存</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- AI设置模态框 -->
+    <div id="aiSettingsModal" class="shortcuts-modal hidden">
+        <div class="shortcuts-modal__overlay"></div>
+        <div class="shortcuts-modal__content">
+            <header class="shortcuts-modal__header">
+                <h2>🤖 AI语法分析设置</h2>
+                <button id="closeAISettingsBtn" class="shortcuts-modal__close">✕</button>
+            </header>
+            <div class="shortcuts-modal__body">
+                <section class="shortcuts-section">
+                    <h3>API配置</h3>
+                    <div style="margin-bottom: 16px;">
+                        <label for="aiApiKey">API Key</label>
+                        <input type="password" id="aiApiKey" placeholder="输入API密钥" style="width: 100%; padding: 8px; margin-top: 4px;">
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label for="aiApiEndpoint">API端点</label>
+                        <input type="text" id="aiApiEndpoint" placeholder="https://api.openai.com/v1/chat/completions" style="width: 100%; padding: 8px; margin-top: 4px;">
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label for="aiModel">模型</label>
+                        <select id="aiModel" style="width: 100%; padding: 8px; margin-top: 4px;">
+                            <option value="gpt-4">GPT-4</option>
+                            <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                </section>
+                <section class="shortcuts-section">
+                    <h3>分析选项</h3>
+                    <label style="display: block; margin: 10px 0;">
+                        <input type="checkbox" id="aiAutoApply" checked>
+                        自动应用标注
+                    </label>
+                </section>
+                <div style="text-align: right; margin-top: 20px;">
+                    <button id="saveAISettingsBtn" type="button" style="padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer;">保存设置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 测试辅助脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadBtn = document.getElementById('loadTestTextBtn');
+            if (loadBtn) {
+                loadBtn.addEventListener('click', function() {
+                    const testText = `
+                        <h3>English Learning Test Document</h3>
+                        <p>The quick brown fox jumps over the lazy dog. This sentence contains every letter of the English alphabet and is perfect for testing.</p>
+                        <p>In an era defined by relentless information flows, the ability to read analytically has become a critical survival skill. Effective readers question assumptions and synthesize insights.</p>
+                        <p>Education is the most powerful weapon which you can use to change the world. Knowledge empowers individuals to make informed decisions.</p>
+                        <p>Practice makes perfect. Consistent effort leads to mastery.</p>
+                    `;
+
+                    const readingArea = document.getElementById('readingArea');
+                    if (readingArea) {
+                        readingArea.innerHTML = testText;
+
+                        // 创建测试文档
+                        if (typeof state !== 'undefined') {
+                            const testDoc = {
+                                id: 'test-doc-' + Date.now(),
+                                title: 'Test Document - All Fixes',
+                                content: testText,
+                                annotations: [],
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            };
+                            state.documents.push(testDoc);
+                            state.activeDocumentId = testDoc.id;
+
+                            if (typeof showToast === 'function') {
+                                showToast('✓ 测试文本已加载，可以开始测试！', 'success');
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 自动显示欢迎提示
+            setTimeout(() => {
+                if (typeof showToast === 'function') {
+                    showToast('👋 欢迎使用测试页面！点击"加载测试文本"开始', 'info');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

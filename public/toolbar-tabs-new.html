@@ -1,0 +1,157 @@
+<!-- 新的选项卡式工具栏 - 用于替换 index.html 中的 selectionToolbar -->
+<div id="selectionToolbar" class="selection-toolbar hidden" role="dialog" aria-modal="true">
+    <form id="annotationForm">
+        <!-- 选项卡导航 -->
+        <div class="toolbar-tabs">
+            <button type="button" class="toolbar-tab active" data-tab="basic">基础</button>
+            <button type="button" class="toolbar-tab" data-tab="grammar">语法</button>
+            <button type="button" class="toolbar-tab" data-tab="style">样式</button>
+            <button type="button" class="toolbar-tab" data-tab="notes">备注</button>
+        </div>
+
+        <!-- 基础标注选项卡 -->
+        <div class="toolbar-tab-content active" data-tab-content="basic">
+            <fieldset>
+                <legend>标注类型</legend>
+                <div class="category-buttons">
+                    <button type="button" data-category="vocab">生词</button>
+                    <button type="button" data-category="phrase">词组</button>
+                    <button type="button" data-category="difficulty">疑难</button>
+                    <button type="button" data-category="keypoint">重点</button>
+                    <button type="button" data-category="translation">翻译</button>
+                    <button type="button" data-category="custom">自定义</button>
+                </div>
+                <input id="customCategoryInput" class="hidden" type="text" placeholder="输入自定义分类">
+            </fieldset>
+
+            <fieldset>
+                <legend>颜色</legend>
+                <div class="color-palette" role="group">
+                    <button type="button" data-color="honey" title="蜜糖色"></button>
+                    <button type="button" data-color="mint" title="薄荷色"></button>
+                    <button type="button" data-color="sky" title="天空色"></button>
+                    <button type="button" data-color="orchid" title="兰花色"></button>
+                    <button type="button" data-color="sunset" title="落日色"></button>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>文本样式</legend>
+                <div class="style-toggles">
+                    <label class="style-toggle">
+                        <input type="checkbox" id="boldToggle"> 加粗
+                    </label>
+                    <label class="style-toggle">
+                        <input type="checkbox" id="underlineToggle"> 下划线
+                    </label>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- 语法分析选项卡 -->
+        <div class="toolbar-tab-content" data-tab-content="grammar">
+            <fieldset>
+                <legend>语法成分</legend>
+                <div class="category-buttons grammar-buttons">
+                    <button type="button" data-category="mainSubject" title="黑色">主语</button>
+                    <button type="button" data-category="clauseSubject" title="绿色">从句主语</button>
+                    <button type="button" data-category="mainVerb" title="红色">谓语</button>
+                    <button type="button" data-category="clauseVerb" title="深红色">从句谓语</button>
+                    <button type="button" data-category="object" title="橙色">宾/表</button>
+                    <button type="button" data-category="attribute" title="紫色 (..）">定语</button>
+                    <button type="button" data-category="adverbial" title="蓝色 [..]">状语</button>
+                    <button type="button" data-category="conjunction" title="蓝绿色">连词</button>
+                    <button type="button" data-category="clauseMarker" title="粉色 {..}">引导词</button>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- 样式选项卡 -->
+        <div class="toolbar-tab-content" data-tab-content="style">
+            <fieldset>
+                <legend>边框样式</legend>
+                <div class="border-style-buttons">
+                    <button type="button" class="border-style-btn" data-border="none" title="无边框">无</button>
+                    <button type="button" class="border-style-btn" data-border="square" title="方框">□</button>
+                    <button type="button" class="border-style-btn" data-border="round" title="圆框">○</button>
+                    <button type="button" class="border-style-btn" data-border="dashed" title="虚线">--</button>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Emoji 标记</legend>
+                <div class="emoji-buttons">
+                    <button type="button" class="emoji-btn" data-emoji="">无</button>
+                    <button type="button" class="emoji-btn" data-emoji="⭐">⭐</button>
+                    <button type="button" class="emoji-btn" data-emoji="💡">💡</button>
+                    <button type="button" class="emoji-btn" data-emoji="❗">❗</button>
+                    <button type="button" class="emoji-btn" data-emoji="❓">❓</button>
+                    <button type="button" class="emoji-btn" data-emoji="✅">✅</button>
+                    <button type="button" class="emoji-btn" data-emoji="🔥">🔥</button>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>额外样式</legend>
+                <label class="style-toggle">
+                    <input type="checkbox" id="strikethroughToggle"> 删除线
+                </label>
+                <label class="style-toggle">
+                    <input type="checkbox" id="showNoteBelow"> 下方显示注释
+                </label>
+            </fieldset>
+
+            <fieldset>
+                <legend>自定义背景</legend>
+                <input type="color" id="customBgColor" style="width: 100%; height: 28px; border-radius: 6px; border: none;">
+            </fieldset>
+
+            <fieldset>
+                <legend>字体</legend>
+                <select id="fontFamilySelect" style="width: 100%; padding: 5px 6px; border-radius: 6px; border: none; font-size: 12px;">
+                    <option value="">默认</option>
+                    <option value="serif">衬线体</option>
+                    <option value="sans-serif">无衬线</option>
+                    <option value="monospace">等宽</option>
+                    <option value="Arial">Arial</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Verdana">Verdana</option>
+                </select>
+            </fieldset>
+        </div>
+
+        <!-- 备注与标签选项卡 -->
+        <div class="toolbar-tab-content" data-tab-content="notes">
+            <fieldset>
+                <legend>释义/注释</legend>
+                <div class="field">
+                    <div style="position: relative;">
+                        <textarea id="noteInput" rows="3" placeholder="添加释义或注释" style="width: 100%; padding: 6px 8px; border-radius: 6px; border: none; font-size: 12px; resize: vertical;"></textarea>
+                        <button type="button" id="aiExplainBtn" class="ghost-btn" style="position: absolute; top: 4px; right: 4px; padding: 3px 6px; font-size: 11px;" title="使用AI自动生成释义">🤖 AI</button>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>标签</legend>
+                <div class="field">
+                    <input id="tagsInput" type="text" placeholder="例如：重点, 难点" style="width: 100%; padding: 5px 8px; border-radius: 6px; border: none; font-size: 12px;">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>快捷操作</legend>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button type="button" id="quickHighlightBtn" class="ghost-btn" style="flex: 1; font-size: 11px; padding: 4px 6px;">快捷划线</button>
+                    <button type="button" id="saveTemplateBtn" class="ghost-btn" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="保存当前配置为模板">💾</button>
+                    <button type="button" id="loadTemplateBtn" class="ghost-btn" style="flex: 1; font-size: 11px; padding: 4px 6px;" title="加载已保存的模板">📋</button>
+                </div>
+            </fieldset>
+        </div>
+
+        <div class="toolbar-actions">
+            <button type="button" id="cancelAnnotationBtn" class="ghost-btn">取消</button>
+            <button type="submit" class="primary">保存标注</button>
+        </div>
+    </form>
+</div>

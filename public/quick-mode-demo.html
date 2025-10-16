@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>快速标注模式 - 工作演示</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fb;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .format-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #d1d5db;
+            background: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .format-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .color-btn.active {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        .color-btn.honey { background: #fef08a; }
+        .color-btn.mint { background: #86efac; }
+        .color-btn.sky { background: #7dd3fc; }
+        .color-btn.orchid { background: #d8b4fe; }
+        .color-btn.sunset { background: #fca5a1; }
+
+        .quick-toggle {
+            margin-left: auto;
+            padding: 10px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .quick-toggle.active {
+            background: #0f172a;
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.2);
+        }
+
+        .reading-area {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .reading-area p {
+            margin: 0 0 16px 0;
+        }
+
+        .highlight {
+            padding: 2px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .highlight[data-color="honey"] { background: #fef08a; }
+        .highlight[data-color="mint"] { background: #86efac; }
+        .highlight[data-color="sky"] { background: #7dd3fc; }
+        .highlight[data-color="orchid"] { background: #d8b4fe; }
+        .highlight[data-color="sunset"] { background: #fca5a1; }
+
+        .highlight[data-bold="true"] { font-weight: bold; }
+        .highlight[data-underline="true"] { text-decoration: underline; }
+
+        .annotations {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .annotation-item {
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .info {
+            background: #dbeafe;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .info strong {
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <strong>使用步骤：</strong><br>
+        1️⃣ 点击颜色（圆形按钮）<br>
+        2️⃣ 点击 B（加粗）<br>
+        3️⃣ 点击"快速标注"（按钮变深黑色）<br>
+        4️⃣ 选中下方文字 → <strong>自动标注！不弹窗！</strong>
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+        <div class="btn-group">
+            <button class="format-btn" id="boldBtn">B</button>
+            <button class="format-btn" id="underlineBtn">U</button>
+        </div>
+
+        <div class="btn-group">
+            <button class="color-btn honey" data-color="honey"></button>
+            <button class="color-btn mint" data-color="mint"></button>
+            <button class="color-btn sky" data-color="sky"></button>
+            <button class="color-btn orchid" data-color="orchid"></button>
+            <button class="color-btn sunset" data-color="sunset"></button>
+        </div>
+
+        <button class="quick-toggle" id="quickToggle">快速标注</button>
+    </div>
+
+    <!-- 阅读区 -->
+    <div class="reading-area" id="readingArea">
+        <p>Learning English is an important skill in today's globalized world.</p>
+        <p>It opens up opportunities for communication, education, and career advancement.</p>
+        <p>Technology has made language learning more accessible than ever before.</p>
+    </div>
+
+    <!-- 标注列表 -->
+    <div class="annotations">
+        <h3>标注列表</h3>
+        <div id="annotationList">暂无标注</div>
+    </div>
+
+    <script>
+        // 状态
+        const state = {
+            quickMode: false,
+            color: null,
+            bold: false,
+            underline: false,
+            annotations: []
+        };
+
+        // DOM元素
+        const boldBtn = document.getElementById('boldBtn');
+        const underlineBtn = document.getElementById('underlineBtn');
+        const colorBtns = document.querySelectorAll('.color-btn');
+        const quickToggle = document.getElementById('quickToggle');
+        const readingArea = document.getElementById('readingArea');
+        const annotationList = document.getElementById('annotationList');
+
+        // Toast提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // 加粗切换
+        boldBtn.addEventListener('click', () => {
+            state.bold = !state.bold;
+            boldBtn.classList.toggle('active', state.bold);
+        });
+
+        // 下划线切换
+        underlineBtn.addEventListener('click', () => {
+            state.underline = !state.underline;
+            underlineBtn.classList.toggle('active', state.underline);
+        });
+
+        // 颜色选择
+        colorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                colorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                state.color = btn.dataset.color;
+            });
+        });
+
+        // 快速标注模式切换
+        quickToggle.addEventListener('click', () => {
+            state.quickMode = !state.quickMode;
+
+            if (state.quickMode) {
+                // 开启模式
+                quickToggle.classList.add('active');
+                quickToggle.textContent = '退出快速标注';
+                showToast('✓ 快速标注模式已开启');
+            } else {
+                // 关闭模式
+                quickToggle.classList.remove('active');
+                quickToggle.textContent = '快速标注';
+                showToast('✓ 快速标注模式已关闭');
+            }
+        });
+
+        // 监听文字选择
+        readingArea.addEventListener('mouseup', () => {
+            if (!state.quickMode) return;
+
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+
+            if (!selectedText) return;
+            if (!state.color) {
+                showToast('⚠️ 请先选择颜色');
+                selection.removeAllRanges();
+                return;
+            }
+
+            // 创建高亮标注
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            span.dataset.color = state.color;
+            if (state.bold) span.dataset.bold = 'true';
+            if (state.underline) span.dataset.underline = 'true';
+
+            try {
+                range.surroundContents(span);
+
+                // 保存标注（note和tags为空）
+                state.annotations.push({
+                    text: selectedText,
+                    color: state.color,
+                    bold: state.bold,
+                    underline: state.underline,
+                    note: '',  // ← 空！
+                    tags: []   // ← 空！
+                });
+
+                // 更新列表
+                updateAnnotationList();
+
+                // 清除选择
+                selection.removeAllRanges();
+
+                // 提示
+                showToast('✓ 已快速标注');
+            } catch (e) {
+                showToast('⚠️ 标注失败');
+                selection.removeAllRanges();
+            }
+        });
+
+        // 更新标注列表
+        function updateAnnotationList() {
+            if (state.annotations.length === 0) {
+                annotationList.innerHTML = '暂无标注';
+                return;
+            }
+
+            annotationList.innerHTML = state.annotations.map((ann, i) => `
+                <div class="annotation-item">
+                    <strong>${i + 1}. ${ann.text}</strong><br>
+                    颜色: ${ann.color} | 加粗: ${ann.bold ? '是' : '否'} | 下划线: ${ann.underline ? '是' : '否'}<br>
+                    note: <em>${ann.note || '(空)'}</em> | tags: <em>${ann.tags.length > 0 ? ann.tags.join(', ') : '(空)'}</em>
+                </div>
+            `).join('');
+        }
+
+        console.log('✅ 快速标注模式演示已加载');
+        console.log('📝 选中文字前，请先：');
+        console.log('   1. 点击颜色按钮');
+        console.log('   2. 点击B（可选）');
+        console.log('   3. 点击"快速标注"');
+        console.log('   4. 选中文字 → 自动标注！');
+    </script>
+</body>
+</html>

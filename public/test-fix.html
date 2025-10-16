@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试修复 - 选中文本标记框和快速标注</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-info {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px;
+        }
+        .test-info h2 {
+            color: #1e40af;
+            margin-top: 0;
+        }
+        .test-steps {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .test-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .test-steps li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        .status.fixed {
+            background: #10b981;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <div class="test-info">
+            <h2>🔧 修复验证测试页面</h2>
+            <p><strong>修复内容：</strong></p>
+            <ul>
+                <li>✅ 修复选中文本没有弹出标记框的问题 <span class="status fixed">已修复</span></li>
+                <li>✅ 修复快速标注模式无法快速标注的问题 <span class="status fixed">已修复</span></li>
+            </ul>
+
+            <div class="test-steps">
+                <h3>📋 测试步骤：</h3>
+                <ol>
+                    <li><strong>测试选中文本弹出标记框：</strong>
+                        <ul>
+                            <li>在下方阅读区选中任意文本</li>
+                            <li>应该会弹出标注工具栏</li>
+                            <li>可以选择类别、颜色等进行标注</li>
+                        </ul>
+                    </li>
+                    <li><strong>测试快速标注模式：</strong>
+                        <ul>
+                            <li>点击"快速标注"按钮（或按 Ctrl+Q）进入快速标注模式</li>
+                            <li>先在工具栏选择要使用的颜色和样式</li>
+                            <li>然后选中文本，应该立即应用标注，无需弹出对话框</li>
+                            <li>再次点击"退出快速标注"（或按 Esc）退出模式</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div style="margin-top: 15px; padding: 10px; background: #fef3c7; border-radius: 6px;">
+                <strong>💡 提示：</strong>
+                <ul style="margin: 5px 0;">
+                    <li>修复了重复的 mouseup 事件监听器冲突</li>
+                    <li>修复了 applyHighlight 函数调用缺少 range 参数的 bug</li>
+                    <li>增强了错误提示，提供更友好的用户体验</li>
+                </ul>
+            </div>
+        </div>
+
+        <header class="app-header">
+            <h1>英语短文阅读标注工具 - 测试页面</h1>
+        </header>
+
+        <main class="layout" style="display: block;">
+            <section class="panel reader-panel">
+                <header class="panel-header">
+                    <h2>阅读标注区</h2>
+                    <div class="reader-tools">
+                        <button id="loadTestTextBtn" type="button">加载测试文本</button>
+                        <button id="clearHighlightsBtn" class="ghost-btn" type="button">清除全部标注</button>
+                    </div>
+                </header>
+
+                <div class="formatting-toolbar" role="toolbar" aria-label="快速标注工具">
+                    <div class="format-group" aria-label="文本样式">
+                        <button type="button" id="formatBoldToggle" class="format-btn" data-format="bold" aria-pressed="false" title="加粗 (Ctrl+B)">B</button>
+                        <button type="button" id="formatUnderlineToggle" class="format-btn" data-format="underline" aria-pressed="false" title="下划线 (Ctrl+U)">U</button>
+                    </div>
+                    <div class="format-group color-group" aria-label="背景颜色">
+                        <button type="button" class="format-color" data-color="honey" title="蜜糖色"></button>
+                        <button type="button" class="format-color" data-color="mint" title="薄荷色"></button>
+                        <button type="button" class="format-color" data-color="sky" title="天空色"></button>
+                        <button type="button" class="format-color" data-color="orchid" title="兰花色"></button>
+                        <button type="button" class="format-color" data-color="sunset" title="落日色"></button>
+                    </div>
+                    <button type="button" id="formatApplyBtn" class="ghost-btn format-apply">快速标注</button>
+                </div>
+
+                <div id="readingArea" class="reading-area" tabindex="0">
+                    <p>点击"加载测试文本"按钮开始测试。</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="selectionToolbar" class="selection-toolbar hidden" role="dialog" aria-modal="true">
+        <form id="annotationForm">
+            <fieldset>
+                <legend>标注类型</legend>
+                <div class="category-buttons">
+                    <button type="button" data-category="vocab">生词</button>
+                    <button type="button" data-category="phrase">词组</button>
+                    <button type="button" data-category="difficulty">疑难</button>
+                    <button type="button" data-category="keypoint">重点</button>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>样式</legend>
+                <div class="style-options">
+                    <div class="color-palette" role="group">
+                        <button type="button" data-color="honey" title="蜜糖色"></button>
+                        <button type="button" data-color="mint" title="薄荷色"></button>
+                        <button type="button" data-color="sky" title="天空色"></button>
+                        <button type="button" data-color="orchid" title="兰花色"></button>
+                        <button type="button" data-color="sunset" title="落日色"></button>
+                    </div>
+                    <div class="style-toggles" role="group">
+                        <label class="style-toggle">
+                            <input type="checkbox" id="boldToggle"> 加粗
+                        </label>
+                        <label class="style-toggle">
+                            <input type="checkbox" id="underlineToggle"> 下划线样式
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>备注</legend>
+                <div class="field">
+                    <textarea id="noteInput" rows="2" placeholder="添加释义或注释"></textarea>
+                </div>
+                <div class="field">
+                    <input id="tagsInput" type="text" placeholder="标签（用逗号分隔）">
+                </div>
+            </fieldset>
+
+            <div class="toolbar-actions">
+                <button type="button" id="cancelAnnotationBtn" class="ghost-btn">取消</button>
+                <button type="submit" class="primary">保存标注</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 测试辅助脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadTestTextBtn = document.getElementById('loadTestTextBtn');
+            if (loadTestTextBtn) {
+                loadTestTextBtn.addEventListener('click', function() {
+                    const testText = `
+                        <h3>Test Document</h3>
+                        <p>The quick brown fox jumps over the lazy dog. This sentence contains every letter of the English alphabet.</p>
+                        <p>Select any text in this area to test the annotation toolbar. The toolbar should appear immediately after selection.</p>
+                        <p>To test quick annotation mode, click the "快速标注" button, select a color and style, then select text. The annotation should be applied instantly without showing the dialog.</p>
+                        <p>In an era defined by relentless information flows, the ability to read analytically has become a critical survival skill.</p>
+                    `;
+
+                    const readingArea = document.getElementById('readingArea');
+                    if (readingArea) {
+                        readingArea.innerHTML = testText;
+
+                        // 创建一个测试文档
+                        if (typeof state !== 'undefined') {
+                            const testDoc = {
+                                id: 'test-doc-' + Date.now(),
+                                title: 'Test Document',
+                                content: testText,
+                                annotations: [],
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            };
+                            state.documents.push(testDoc);
+                            state.activeDocumentId = testDoc.id;
+
+                            if (typeof showToast === 'function') {
+                                showToast('✓ 测试文本已加载', 'success');
+                            } else {
+                                alert('✓ 测试文本已加载\n现在可以开始测试了！');
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习标注工具 v4.1</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles_v4.1_clean.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 头部导航 -->
+        <header class="app-header">
+            <div>
+                <h1>📚 英语学习标注工具</h1>
+                <p>智能标注 | AI分析 | 语法学习</p>
+            </div>
+            <div class="header-actions">
+                <button id="showAISettingsBtn" class="ghost-btn" title="AI设置">🤖 AI</button>
+                <button id="themeToggleBtn" class="ghost-btn" type="button" title="切换主题">🌙</button>
+                <button id="showVocabBookBtn" class="ghost-btn" title="生词本">📖 生词本</button>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <div class="main-container">
+            <!-- 左侧：文本输入 -->
+            <section class="panel input-panel">
+                <h2>📝 短文输入</h2>
+                <textarea id="inputArea" placeholder="在此粘贴或输入英文文本..."></textarea>
+                <div class="panel-actions">
+                    <button id="saveDocBtn" class="primary">保存并打开短文</button>
+                    <button id="clearInputBtn" class="ghost-btn">清空</button>
+                </div>
+            </section>
+
+            <!-- 中间：阅读区 -->
+            <section class="panel reading-panel">
+                <div class="panel-header">
+                    <h2>📖 阅读区</h2>
+                    <div class="reading-actions">
+                        <button id="aiAnalyzeBtn" class="primary">🤖 AI分析</button>
+                        <button id="exportMarkdownBtn" class="ghost-btn">导出</button>
+                    </div>
+                </div>
+                <div id="readingArea" class="reading-area">
+                    点击左侧"保存并打开短文"后开始标注。选中文本即可调出标注菜单。
+                </div>
+            </section>
+
+            <!-- 右侧：标注列表 -->
+            <section class="panel annotations-panel">
+                <div class="panel-header">
+                    <h2>🏷️ 我的标注</h2>
+                    <button id="clearAllBtn" class="ghost-btn">清空</button>
+                </div>
+                <div id="annotationsList" class="annotations-list"></div>
+            </section>
+        </div>
+
+        <!-- 简洁版标注对话框 -->
+        <div id="selectionToolbar" class="selection-toolbar hidden">
+            <form id="annotationForm">
+                <!-- 快速操作 -->
+                <div class="quick-actions">
+                    <button type="button" class="quick-btn" onclick="window.quickAnnotate ? window.quickAnnotate('vocab') : alert('功能加载中...')">⭐ 生词</button>
+                    <button type="button" class="quick-btn" onclick="window.quickAnnotate ? window.quickAnnotate('keypoint') : alert('功能加载中...')">💡 重点</button>
+                    <button type="button" class="quick-btn" onclick="window.quickAnnotate ? window.quickAnnotate('difficulty') : alert('功能加载中...')">❗ 疑难</button>
+                    <button type="button" class="quick-btn" onclick="window.quickAnnotate ? window.quickAnnotate('phrase') : alert('功能加载中...')">📝 词组</button>
+                </div>
+
+                <!-- 标注类型 -->
+                <div class="form-group">
+                    <label class="group-label">标注类型</label>
+                    <div class="category-buttons">
+                        <button type="button" data-category="vocab">生词</button>
+                        <button type="button" data-category="phrase">词组</button>
+                        <button type="button" data-category="difficulty">疑难</button>
+                        <button type="button" data-category="keypoint">重点</button>
+                        <button type="button" data-category="translation">翻译</button>
+                        <button type="button" data-category="custom">自定义</button>
+                    </div>
+                    <input id="customCategoryInput" class="hidden" type="text" placeholder="输入自定义分类">
+                </div>
+
+                <!-- 语法分析（折叠） -->
+                <details class="form-group collapsible">
+                    <summary class="group-label clickable">语法分析 ▼</summary>
+                    <div class="category-buttons grammar-buttons">
+                        <button type="button" data-category="mainSubject">⚫ 主语</button>
+                        <button type="button" data-category="clauseSubject">🟢 从句主语</button>
+                        <button type="button" data-category="mainVerb">🔴 谓语</button>
+                        <button type="button" data-category="clauseVerb">🟥 从句谓语</button>
+                        <button type="button" data-category="object">🟠 宾/表</button>
+                        <button type="button" data-category="attribute">🟣 定语()</button>
+                        <button type="button" data-category="adverbial">🔵 状语[]</button>
+                        <button type="button" data-category="conjunction">🔷 连词</button>
+                        <button type="button" data-category="clauseMarker">🩷 引导{}</button>
+                    </div>
+                </details>
+
+                <!-- 样式选项（折叠） -->
+                <details class="form-group collapsible">
+                    <summary class="group-label clickable">样式选项 ▼</summary>
+                    <div class="style-section">
+                        <label class="style-label">背景颜色</label>
+                        <div class="color-palette">
+                            <button type="button" data-color="honey" class="color-btn" title="蜜糖色" style="background: var(--honey)"></button>
+                            <button type="button" data-color="mint" class="color-btn" title="薄荷色" style="background: var(--mint)"></button>
+                            <button type="button" data-color="sky" class="color-btn" title="天空色" style="background: var(--sky)"></button>
+                            <button type="button" data-color="orchid" class="color-btn" title="兰花色" style="background: var(--orchid)"></button>
+                            <button type="button" data-color="sunset" class="color-btn" title="夕阳色" style="background: var(--sunset)"></button>
+                        </div>
+
+                        <label class="style-label">文本样式</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="boldToggle"> 加粗</label>
+                            <label><input type="checkbox" id="underlineToggle"> 下划线</label>
+                            <label><input type="checkbox" id="strikethroughToggle"> 删除线</label>
+                        </div>
+
+                        <label class="style-label">边框</label>
+                        <div class="border-style-buttons">
+                            <button type="button" class="border-style-btn" data-border="none">无</button>
+                            <button type="button" class="border-style-btn" data-border="square">□</button>
+                            <button type="button" class="border-style-btn" data-border="round">○</button>
+                            <button type="button" class="border-style-btn" data-border="dashed">--</button>
+                        </div>
+
+                        <label class="style-label">标记</label>
+                        <div class="emoji-buttons">
+                            <button type="button" class="emoji-btn" data-emoji="">无</button>
+                            <button type="button" class="emoji-btn" data-emoji="⭐">⭐</button>
+                            <button type="button" class="emoji-btn" data-emoji="💡">💡</button>
+                            <button type="button" class="emoji-btn" data-emoji="��">❗</button>
+                            <button type="button" class="emoji-btn" data-emoji="✅">✅</button>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 备注 -->
+                <div class="form-group">
+                    <label class="group-label">释义/注释</label>
+                    <div class="textarea-wrapper">
+                        <textarea id="noteInput" rows="2" placeholder="添加释义或注释"></textarea>
+                        <button type="button" id="aiExplainBtn" class="ai-btn-inline">🤖</button>
+                    </div>
+                    <input id="tagsInput" type="text" class="input-field" placeholder="标签（逗号分隔）">
+                    <label class="checkbox-inline"><input type="checkbox" id="showNoteBelow"> 下方显示</label>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="form-footer">
+                    <button type="button" id="saveTemplateBtn" class="btn-icon" title="保存模板">💾</button>
+                    <button type="button" id="loadTemplateBtn" class="btn-icon" title="加载模板">📋</button>
+                    <button type="button" id="cancelAnnotationBtn" class="btn-cancel">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+
+                <!-- 隐藏字段 -->
+                <input type="color" id="customBgColor" class="hidden">
+                <select id="fontFamilySelect" class="hidden">
+                    <option value="">默认</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- 右键菜单 -->
+        <div id="highlightContextMenu" class="context-menu hidden">
+            <button class="context-menu-item" data-action="translate">🤖 AI翻译</button>
+            <button class="context-menu-item" data-action="addToVocab">⭐ 添加到生词本</button>
+            <button class="context-menu-item" data-action="speak">🔊 朗读</button>
+        </div>
+
+        <!-- AI设置模态框 -->
+        <div id="aiSettingsModal" class="modal hidden">
+            <div class="modal-content">
+                <h3>🤖 AI设置</h3>
+                <div class="form-field">
+                    <label>API密钥</label>
+                    <input type="password" id="aiApiKey" placeholder="sk-...">
+                </div>
+                <div class="form-field">
+                    <label>API端点</label>
+                    <input type="text" id="aiApiEndpoint" value="https://api.openai.com/v1/chat/completions">
+                </div>
+                <div class="form-field">
+                    <label>模型</label>
+                    <select id="aiModel">
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button id="closeAISettingsBtn" class="btn-cancel">取消</button>
+                    <button id="saveAISettingsBtn" class="btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI翻译模态框 -->
+        <div id="aiTranslateModal" class="modal hidden">
+            <div class="modal-content">
+                <h3>🤖 AI翻译</h3>
+                <div id="aiTranslateResult" class="translate-result">翻译中...</div>
+                <button id="closeAITranslateBtn" class="btn-primary">关闭</button>
+            </div>
+        </div>
+
+        <!-- 生词本模态框 -->
+        <div id="vocabBookModal" class="modal hidden">
+            <div class="modal-content">
+                <h3>📖 生词本</h3>
+                <div id="vocabBookList" class="vocab-list"></div>
+                <div class="modal-actions">
+                    <button id="exportAnkiBtn" class="btn-secondary">导出Anki</button>
+                    <button id="startReviewBtn" class="btn-primary">开始复习</button>
+                    <button id="closeVocabBookBtn" class="btn-cancel">关闭</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 复习模态框 -->
+        <div id="vocabReviewModal" class="modal hidden">
+            <div class="modal-content review-card">
+                <div class="review-progress"></div>
+                <div class="card-front"></div>
+                <div class="card-back hidden"></div>
+                <div class="modal-actions">
+                    <button id="flipCardBtn" class="btn-secondary">翻转</button>
+                    <button id="masteredBtn" class="btn-primary">已掌握</button>
+                    <button id="nextCardBtn" class="btn-primary">下一个</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TTS控制条 -->
+        <div id="ttsControls" class="tts-controls hidden">
+            <button id="ttsPlayBtn">🔊</button>
+            <button id="ttsStopBtn">⏹️</button>
+            <span id="ttsStatus">就绪</span>
+            <input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1">
+            <span id="ttsRateValue">1.0x</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="quick-annotate-fix.js"></script>
+    <script src="quick-mode-enhanced.js"></script>
+    <script>
+        // 验证快速标注功能
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof window.quickAnnotate === 'function') {
+                    console.log('✅ 快速标注功能已就绪');
+                }
+                if (typeof window.toggleQuickMode === 'function') {
+                    console.log('✅ 快速标注模式已就绪');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

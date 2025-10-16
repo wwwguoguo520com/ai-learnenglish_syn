@@ -1,0 +1,564 @@
+<!-- 优化后的标注对话框 - 简洁版 -->
+<div id="selectionToolbar" class="selection-toolbar hidden" role="dialog" aria-modal="true">
+    <form id="annotationForm">
+        <!-- 顶部快捷操作 -->
+        <div class="form-header">
+            <div class="form-actions">
+                <button type="button" id="quickHighlightBtn" class="btn-secondary">快捷划线</button>
+                <button type="button" id="saveTemplateBtn" class="btn-secondary">💾 存模板</button>
+                <button type="button" id="loadTemplateBtn" class="btn-secondary">📋 用模板</button>
+            </div>
+        </div>
+
+        <!-- 标注类型选择 -->
+        <div class="form-section">
+            <div class="section-header">
+                <h4>标注类型</h4>
+            </div>
+            <div class="button-grid">
+                <button type="button" class="category-btn" data-category="vocab">生词</button>
+                <button type="button" class="category-btn" data-category="phrase">词组</button>
+                <button type="button" class="category-btn" data-category="difficulty">疑难</button>
+                <button type="button" class="category-btn" data-category="keypoint">重点</button>
+                <button type="button" class="category-btn" data-category="translation">翻译</button>
+                <button type="button" class="category-btn" data-category="custom">自定义</button>
+            </div>
+            <input id="customCategoryInput" class="input-field hidden" type="text" placeholder="输入自定义分类">
+        </div>
+
+        <!-- 语法分析 -->
+        <div class="form-section">
+            <div class="section-header">
+                <h4>语法分析</h4>
+                <span class="section-hint">带颜色指示器</span>
+            </div>
+            <div class="button-grid grammar-grid">
+                <button type="button" class="grammar-btn" data-category="mainSubject">
+                    <span class="color-dot" style="background: #000;"></span>主语
+                </button>
+                <button type="button" class="grammar-btn" data-category="clauseSubject">
+                    <span class="color-dot" style="background: #059669;"></span>从句主语
+                </button>
+                <button type="button" class="grammar-btn" data-category="mainVerb">
+                    <span class="color-dot" style="background: #dc2626;"></span>谓语
+                </button>
+                <button type="button" class="grammar-btn" data-category="clauseVerb">
+                    <span class="color-dot" style="background: #991b1b;"></span>从句谓语
+                </button>
+                <button type="button" class="grammar-btn" data-category="object">
+                    <span class="color-dot" style="background: #ea580c;"></span>宾/表
+                </button>
+                <button type="button" class="grammar-btn" data-category="attribute">
+                    <span class="color-dot" style="background: #9333ea;"></span>定语(.)
+                </button>
+                <button type="button" class="grammar-btn" data-category="adverbial">
+                    <span class="color-dot" style="background: #2563eb;"></span>状语[.]
+                </button>
+                <button type="button" class="grammar-btn" data-category="conjunction">
+                    <span class="color-dot" style="background: #0891b2;"></span>连词
+                </button>
+                <button type="button" class="grammar-btn" data-category="clauseMarker">
+                    <span class="color-dot" style="background: #ec4899;"></span>引导词{.}
+                </button>
+            </div>
+        </div>
+
+        <!-- 样式选项 - 折叠 -->
+        <details class="form-section collapsible">
+            <summary class="section-header clickable">
+                <h4>样式选项</h4>
+                <span class="toggle-icon">▼</span>
+            </summary>
+            <div class="section-content">
+                <!-- 颜色选择 -->
+                <div class="style-row">
+                    <label class="style-label">背景颜色</label>
+                    <div class="color-palette">
+                        <button type="button" class="color-btn" data-color="honey" title="蜜糖色" style="background: var(--honey);"></button>
+                        <button type="button" class="color-btn" data-color="mint" title="薄荷色" style="background: var(--mint);"></button>
+                        <button type="button" class="color-btn" data-color="sky" title="天空色" style="background: var(--sky);"></button>
+                        <button type="button" class="color-btn" data-color="orchid" title="兰花色" style="background: var(--orchid);"></button>
+                        <button type="button" class="color-btn" data-color="sunset" title="夕阳色" style="background: var(--sunset);"></button>
+                    </div>
+                </div>
+
+                <!-- 文本样式 -->
+                <div class="style-row">
+                    <label class="style-label">文本样式</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="boldToggle">
+                            <span>加粗</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="underlineToggle">
+                            <span>下划线</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="strikethroughToggle">
+                            <span>删除线</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 边框样式 -->
+                <div class="style-row">
+                    <label class="style-label">边框</label>
+                    <div class="button-group">
+                        <button type="button" class="style-btn" data-border="none">无</button>
+                        <button type="button" class="style-btn" data-border="square">□</button>
+                        <button type="button" class="style-btn" data-border="round">○</button>
+                        <button type="button" class="style-btn" data-border="dashed">--</button>
+                    </div>
+                </div>
+
+                <!-- Emoji -->
+                <div class="style-row">
+                    <label class="style-label">标记</label>
+                    <div class="button-group">
+                        <button type="button" class="emoji-btn" data-emoji="">无</button>
+                        <button type="button" class="emoji-btn" data-emoji="⭐">⭐</button>
+                        <button type="button" class="emoji-btn" data-emoji="💡">💡</button>
+                        <button type="button" class="emoji-btn" data-emoji="❗">❗</button>
+                        <button type="button" class="emoji-btn" data-emoji="✅">✅</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- 备注与标签 -->
+        <div class="form-section">
+            <div class="section-header">
+                <h4>备注与标签</h4>
+            </div>
+            <div class="input-group">
+                <label class="input-label">
+                    <span>释义/注释</span>
+                    <button type="button" id="aiExplainBtn" class="ai-btn-small">🤖 AI解释</button>
+                </label>
+                <textarea id="noteInput" rows="2" class="textarea-field" placeholder="添加释义或注释"></textarea>
+            </div>
+            <div class="input-group">
+                <label class="input-label">标签（逗号分隔）</label>
+                <input id="tagsInput" type="text" class="input-field" placeholder="例如：重点, 难点">
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" id="showNoteBelow">
+                <span>下方显示注释</span>
+            </label>
+        </div>
+
+        <!-- 底部操作按钮 -->
+        <div class="form-footer">
+            <button type="button" id="cancelAnnotationBtn" class="btn-cancel">取消</button>
+            <button type="submit" class="btn-primary">保存标注</button>
+        </div>
+    </form>
+</div>
+
+<style>
+/* 优化后的标注对话框样式 */
+.selection-toolbar {
+    position: fixed;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    max-width: 480px;
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 10000;
+    padding: 0;
+}
+
+.selection-toolbar.hidden {
+    display: none;
+}
+
+#annotationForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* 表单头部 */
+.form-header {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 12px 12px 0 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* 表单区块 */
+.form-section {
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.section-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.section-hint {
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* 按钮网格 */
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.grammar-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* 类别按钮 */
+.category-btn, .grammar-btn {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+
+.category-btn:hover, .grammar-btn:hover {
+    border-color: #2f54eb;
+    background: #eff6ff;
+}
+
+.category-btn.active, .grammar-btn.active {
+    border-color: #2f54eb;
+    background: #2f54eb;
+    color: white;
+}
+
+/* 语法按钮带颜色点 */
+.grammar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* 折叠区域 */
+.collapsible {
+    border: none;
+    padding: 0;
+}
+
+.collapsible[open] {
+    background: #f9fafb;
+}
+
+.collapsible summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.collapsible summary::-webkit-details-marker {
+    display: none;
+}
+
+.clickable {
+    user-select: none;
+}
+
+.toggle-icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+.collapsible[open] .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.section-content {
+    padding: 16px;
+}
+
+/* 样式行 */
+.style-row {
+    margin-bottom: 16px;
+}
+
+.style-row:last-child {
+    margin-bottom: 0;
+}
+
+.style-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+/* 颜色选择器 */
+.color-palette {
+    display: flex;
+    gap: 8px;
+}
+
+.color-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+}
+
+.color-btn.active {
+    border-color: #2f54eb;
+    box-shadow: 0 0 0 2px rgba(47, 84, 235, 0.2);
+}
+
+/* 复选框组 */
+.checkbox-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.style-btn, .emoji-btn {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.style-btn:hover, .emoji-btn:hover {
+    border-color: #2f54eb;
+    background: #eff6ff;
+}
+
+.style-btn.active, .emoji-btn.active {
+    border-color: #2f54eb;
+    background: #2f54eb;
+    color: white;
+}
+
+/* 输入组 */
+.input-group {
+    margin-bottom: 12px;
+}
+
+.input-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    margin-bottom: 6px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: border-color 0.2s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #2f54eb;
+    box-shadow: 0 0 0 3px rgba(47, 84, 235, 0.1);
+}
+
+.textarea-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.textarea-field:focus {
+    outline: none;
+    border-color: #2f54eb;
+    box-shadow: 0 0 0 3px rgba(47, 84, 235, 0.1);
+}
+
+/* AI按钮 */
+.ai-btn-small {
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ai-btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* 表单底部 */
+.form-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+}
+
+/* 按钮样式 */
+.btn-primary, .btn-secondary, .btn-cancel {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-primary {
+    flex: 1;
+    background: #2f54eb;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-secondary {
+    background: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.btn-cancel {
+    background: white;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.btn-cancel:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* 暗黑模式 */
+[data-theme="dark"] .selection-toolbar {
+    background: #1f2937;
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .form-header,
+[data-theme="dark"] .form-footer {
+    background: #111827;
+    border-color: #374151;
+}
+
+[data-theme="dark"] .form-section {
+    border-color: #374151;
+}
+
+[data-theme="dark"] .section-header h4 {
+    color: #f3f4f6;
+}
+
+[data-theme="dark"] .category-btn,
+[data-theme="dark"] .grammar-btn,
+[data-theme="dark"] .style-btn,
+[data-theme="dark"] .emoji-btn,
+[data-theme="dark"] .btn-secondary,
+[data-theme="dark"] .btn-cancel {
+    background: #374151;
+    color: #f3f4f6;
+    border-color: #4b5563;
+}
+
+[data-theme="dark"] .input-field,
+[data-theme="dark"] .textarea-field {
+    background: #374151;
+    color: #f3f4f6;
+    border-color: #4b5563;
+}
+
+[data-theme="dark"] .collapsible[open] {
+    background: #111827;
+}
+
+/* 隐藏类 */
+.hidden {
+    display: none !important;
+}
+</style>
